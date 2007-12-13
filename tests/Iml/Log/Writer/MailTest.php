@@ -85,6 +85,7 @@ class Iml_Log_Writer_MailTest extends PHPUnit_Framework_TestCase
         $notAZendMail = 'a simple string';
         try {
             new Iml_Log_Writer_Mail($notAZendMail);
+            $this->fail();
         } catch (Exception $e) {
             $this->assertType('PHPUnit_Framework_Error', $e);
             $this->assertRegExp('/must be an instance of Zend_Mail/i', $e->getMessage());
