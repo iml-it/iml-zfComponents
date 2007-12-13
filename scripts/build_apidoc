@@ -19,6 +19,7 @@ if [ ! -f ${API_DOC_DEST}/index.html -o `find ${ZFC_STAGE_DIR}/library -newer ${
     ${PHPDOC} --quiet off \
         --target ${API_DOC_DEST} \
         --directory ${ZFC_STAGE_DIR}/library \
+	--ignore Gdata.php,Gdata/ \
         --title "${API_DOC_TITLE}" \
 	--defaultpackagename "${API_DOC_PACKAGES}" \
         --output ${API_DOC_OUTPUT_STYLE} \
