@@ -1,0 +1,178 @@
+<?php
+/**
+ * IML Zend Framework Components
+ *
+ * LICENSE
+ *
+ * This work is licensed under the Creative Commons Attribution-Share Alike 2.5
+ * Switzerland License. To view a copy of this license, visit
+ * http://creativecommons.org/licenses/by-sa/2.5/ch/ or send a letter to Creative
+ * Commons, 171 Second Street, Suite 300, San Francisco, California, 94105, USA.
+ *
+ * @category   Iml
+ * @package    Iml_Log
+ * @subpackage UnitTests
+ * @copyright  Copyright (c) 2007 Institute for Medical Education, University of Bern (http://www.iml.unibe.ch)
+ * @license    http://creativecommons.org/licenses/by-sa/2.5/ch/     CC-By-Sa
+ * @version    $Id$
+ */
+
+/**
+ * Test helper
+ */
+require_once dirname(dirname(dirname(dirname(__FILE__)))) . DIRECTORY_SEPARATOR . 'TestHelper.php';
+
+/**
+ * Iml_Log_Writer_Mail
+ */
+require_once 'Iml/Log/Writer/Mail.php';
+
+/**
+ * Zend_Mail
+ */
+require_once 'Zend/Mail.php';
+
+/**
+ * Zend_Mail_Transport_Abstract
+ */
+require_once 'Zend/Mail/Transport/Abstract.php';
+
+/**
+ * Mock mail transport class for testing purposes
+ *
+ * @category   Zend
+ * @package    Zend_Mail
+ * @subpackage UnitTests
+ * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license    http://framework.zend.com/license/new-bsd     New BSD License
+ */
+class Zend_Mail_Transport_Mock extends Zend_Mail_Transport_Abstract
+{
+    /**
+     * @var Zend_Mail
+     */
+    public $mail       = null;
+    public $returnPath = null;
+    public $subject    = null;
+    public $from       = null;
+    public $called     = false;
+
+    public function _sendMail()
+    {
+        $this->mail       = $this->_mail;
+        $this->subject    = $this->_mail->getSubject();
+        $this->from       = $this->_mail->getFrom();
+        $this->returnPath = $this->_mail->getReturnPath();
+        $this->called     = true;
+    }
+}
+
+/**
+ * @category   Iml
+ * @package    Iml_Log
+ * @subpackage Writer
+ * @copyright  Copyright (c) 2007 Institute for Medical Education, University of Bern (http://www.iml.unibe.ch)
+ * @license    http://creativecommons.org/licenses/by-sa/2.5/ch/     CC-By-Sa
+ */
+class Iml_Log_Writer_MailTest extends PHPUnit_Framework_TestCase
+{
+    /**
+     * Test case for the contructor which should throw an exception if
+     * no valid Zend_Mail object is passed
+     */
+    public function testConstructorThrowException()
+    {
+        $notAZendMail = 'a simple string';
+        try {
+            new Iml_Log_Writer_Mail($notAZendMail);
+        } catch (Exception $e) {
+            $this->assertType('PHPUnit_Framework_Error', $e);
+            $this->assertRegExp('/must be an instance of Zend_Mail/i', $e->getMessage());
+        }
+    }
+
+    /**
+     * Test case for the constructor when provided with an instance
+     * of Zend_Mail
+     */
+    public function testContructorOnCorrectInstantiation()
+    {
+        $mail = new Zend_Mail();
+        new Iml_Log_Writer_Mail($mail);
+    }
+
+    /**
+     * Test case for the write functionality; should send an email with the
+     * formatted line in it
+     */
+    public function testWrite()
+    {
+        $mail = new Zend_Mail();
+        $mail->setFrom('testmail@example.com', 'test Mail User');
+        $mail->setSubject('Test Subject');
+        $mail->addTo('recipient1@example.com');
+
+        $mock = new Zend_Mail_Transport_Mock();
+        $mail->setDefaultTransport($mock);
+
+        $event = array('message' => 'A test log message');
+
+        $logwriter = new Iml_Log_Writer_Mail($mail);
+        $logwriter->write($event);
+
+        $this->assertTrue($mock->called);
+        $this->assertContains('A test log message', $mock->body);
+    }
+
+    /**
+     * Test case to assert that write fails when shutdown was
+     * called on the writer
+     */
+    public function testShutdownDestroysMailObject()
+    {
+        $mail = new Zend_Mail();
+        $mail->setFrom('testmail@example.com', 'test Mail User');
+        $mail->setSubject('Test Subject');
+        $mail->addTo('recipient1@example.com');
+
+        $mock = new Zend_Mail_Transport_Mock();
+        $mail->setDefaultTransport($mock);
+
+        $event = array('message' => 'A test log message');
+
+        $logwriter = new Iml_Log_Writer_Mail($mail);
+        $logwriter->shutdown();
+
+        try {
+            $logwriter->write($event);
+            $this->fail();
+        } catch (Exception $e) {
+            $this->assertType('Zend_Log_Exception', $e);
+            $this->assertRegExp('/No mail object available/i', $e->getMessage());
+        }
+    }
+
+    /**
+     * Test case to assert that a new formatter can be set
+     */
+    public function testSettingNewFormatter()
+    {
+        $mail = new Zend_Mail();
+        $mail->setFrom('testmail@example.com', 'test Mail User');
+        $mail->setSubject('Test Subject');
+        $mail->addTo('recipient1@example.com');
+
+        $mock = new Zend_Mail_Transport_Mock();
+        $mail->setDefaultTransport($mock);
+
+        $expected = 'foo';
+
+        $formatter = new Zend_Log_Formatter_Simple($expected);
+        $logwriter = new Iml_Log_Writer_Mail($mail);
+        $logwriter->setFormatter($formatter);
+
+        $logwriter->write(array('bar' => 'baz'));
+
+        $this->assertContains($expected, $mock->body);
+    }
+}
