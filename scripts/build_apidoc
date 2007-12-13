@@ -1,0 +1,29 @@
+# variables for phpdoc
+
+ZFC_STAGE_DIR=..
+PHPDOC=phpdoc
+API_DOC_DEST=${ZFC_STAGE_DIR}/documentation/api/
+API_DOC_TITLE="IML Zend Framework Components API Documentation"
+API_DOC_PACKAGES=Iml
+API_DOC_OUTPUT_STYLE=HTML:frames:DOM/earthli
+
+if [ $# -gt 0 -a $1 == "clean"  ] ; then
+    [ -d $API_DOC_DES ] && rm -rf $API_DOC_DEST
+    echo "...Removed last PHP API documentation"
+    exit 0
+fi
+
+echo "Building and staging PHP API documentation..."
+mkdir -p ${API_DOC_DEST}
+if [ ! -f ${API_DOC_DEST}/index.html -o `find ${ZFC_STAGE_DIR}/library -newer ${API_DOC_DEST}/index.html 2>/dev/null | wc -l` -gt 0 ] ; then
+    ${PHPDOC} --quiet off \
+        --target ${API_DOC_DEST} \
+        --directory ${ZFC_STAGE_DIR}/library \
+        --title "${API_DOC_TITLE}" \
+	--defaultpackagename "${API_DOC_PACKAGES}" \
+        --output ${API_DOC_OUTPUT_STYLE} \
+        --sourcecode on
+else
+    echo "PHP API documentation is already staged and up to date."
+fi
+echo "...Done building and staging PHP API documentation."
