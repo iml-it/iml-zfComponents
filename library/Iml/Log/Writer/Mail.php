@@ -28,6 +28,12 @@ require_once 'Zend/Log/Writer/Abstract.php';
 require_once 'Zend/Log/Formatter/Simple.php';
 
 /**
+ * Mail based log writer
+ *
+ * This log writer implements the funcitonality to log to mails. This
+ * way developers and maintainers can be notified about severe errors in
+ * a production application.
+ *
  * @category   Iml
  * @package    Iml_Log
  * @subpackage Writer
