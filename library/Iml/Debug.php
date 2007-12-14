@@ -19,6 +19,11 @@
  */
 
 /**
+ * Iml_Debug_Exception
+ */
+require_once 'Iml/Debug/Exception.php';
+
+/**
  * Zend_Debug
  */
 require_once 'Zend/Debug.php';
@@ -49,9 +54,12 @@ class Iml_Debug extends Zend_Debug
      */
     public static function dumpLogEvents($events, $label=null, $echo=true)
     {
+        if(!is_array($events)) {
+            throw new Iml_Debug_Exception('Array expected for argument 1, ' . gettype($events) . ' given');
+        }
         // format label
-        $output = ($label===null) ? '' : trim($label) . ': ';
-        $output = (self::getSapi() == 'cli') ? strip_tags($output) : $output;
+        $output = ($label===null) ? '' : trim(strip_tags($label)) . ': ';
+        $output = ($label !== null && self::getSapi() != 'cli') ? $output . PHP_EOL : $output;
 
         // use a Zend_Log_Formatter_Simple to do the job
         if (self::getSapi() != 'cli') {
@@ -61,11 +69,14 @@ class Iml_Debug extends Zend_Debug
         }
         $formatter = new Zend_Log_Formatter_Simple($format);
 
+        // reverse order
+        $events = array_reverse($events);
         // format with the created formatter
+        $formatted = '';
         foreach ($events as $event) {
-            $output .= $formatter->format($event) . PHP_EOL;
+            $formatted .= $formatter->format($event) . PHP_EOL;
         }
-        $output = (self::getSapi() == 'cli') ? $output : '<table>' . PHP_EOL . $output . '</table>' . PHP_EOL;
+        $output .= (self::getSapi() == 'cli') ? $formatted : '<table>' . PHP_EOL . $formatted . '</table>' . PHP_EOL;
 
         if ($echo) {
             echo($output);
