@@ -141,4 +141,16 @@ class Iml_DebugTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * Test other modes with a label
+     */
+    public function testDebugDumpOtherLabel()
+    {
+        Iml_Debug::setSapi('cgi');
+        $label = '<h1>A LABEL</h1>';
+        $result = Iml_Debug::dumpLogEvents($this->_events, $label, false);
+        $expected = $label . ': ' . PHP_EOL .$this->_expected;
+        $this->assertEquals($expected, $result);
+    }
+
 }
