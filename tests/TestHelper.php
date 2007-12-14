@@ -48,7 +48,7 @@ $include_path = array(
         $imlZfcCoreTests,
         get_include_path()
         );
-set_include_path(implode(PATH_SEPARATOR, $path));
+set_include_path(implode(PATH_SEPARATOR, $include_path));
 
 /*
  * Load the user-defined test configuration file, if it exists; otherwise, load

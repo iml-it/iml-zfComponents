@@ -47,7 +47,7 @@ require_once 'Zend/Mail/Transport/Abstract.php';
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Iml_Mail_Transport_Mock extends Iml_Mail_Transport_Abstract
+class Iml_Mail_Transport_Mock extends Zend_Mail_Transport_Abstract
 {
     /**
      * @var Zend_Mail
