@@ -1,6 +1,7 @@
 // This is a file skeleton class for demonstrating purposes. Use this style for new classes and files.
 
 <?php
+
 /**
  * IML ZendFramework Components
  *
