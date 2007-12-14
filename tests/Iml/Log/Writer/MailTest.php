@@ -1,4 +1,5 @@
 <?php
+
 /**
  * IML Zend Framework Components
  *
@@ -46,7 +47,7 @@ require_once 'Zend/Mail/Transport/Abstract.php';
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Mail_Transport_Mock extends Zend_Mail_Transport_Abstract
+class Iml_Mail_Transport_Mock extends Iml_Mail_Transport_Abstract
 {
     /**
      * @var Zend_Mail
@@ -113,7 +114,7 @@ class Iml_Log_Writer_MailTest extends PHPUnit_Framework_TestCase
         $mail->setSubject('Test Subject');
         $mail->addTo('recipient1@example.com');
 
-        $mock = new Zend_Mail_Transport_Mock();
+        $mock = new Iml_Mail_Transport_Mock();
         $mail->setDefaultTransport($mock);
 
         $event = array('message' => 'A test log message');
@@ -136,7 +137,7 @@ class Iml_Log_Writer_MailTest extends PHPUnit_Framework_TestCase
         $mail->setSubject('Test Subject');
         $mail->addTo('recipient1@example.com');
 
-        $mock = new Zend_Mail_Transport_Mock();
+        $mock = new Iml_Mail_Transport_Mock();
         $mail->setDefaultTransport($mock);
 
         $event = array('message' => 'A test log message');
@@ -163,7 +164,7 @@ class Iml_Log_Writer_MailTest extends PHPUnit_Framework_TestCase
         $mail->setSubject('Test Subject');
         $mail->addTo('recipient1@example.com');
 
-        $mock = new Zend_Mail_Transport_Mock();
+        $mock = new Iml_Mail_Transport_Mock();
         $mail->setDefaultTransport($mock);
 
         $expected = 'foo';
