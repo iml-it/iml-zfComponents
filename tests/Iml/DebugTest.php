@@ -29,6 +29,11 @@ require_once dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'TestHelper.php'
 require_once 'Iml/Debug.php';
 
 /**
+ * Iml_Debug_Exception
+ */
+require_once 'Iml/Debug/Exception.php';
+
+/**
  * Zend_Log_Formatter_Simple
  */
 require_once 'Zend/Log/Formatter/Simple.php';
@@ -94,6 +99,22 @@ class Iml_DebugTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test if dumpLogEvents() throws an exception if it's
+     * getting a wrong parameter type on call.
+     */
+    public function testWrongParamThrows()
+    {
+        Iml_Debug::setSapi('cli');
+        try {
+            $result = Iml_Debug::dumpLogEvents('a string', null, false);
+            $this->fail();
+        } catch (Exception $e) {
+            $this->assertType('Iml_Debug_Exception', $e);
+            $this->assertRegExp('/expected for argument/i', $e->getMessage());
+        }
+    }
+
+    /**
      * Test case for the debug output in cli mode
      */
     public function testDebugDumpCli()
@@ -149,7 +170,7 @@ class Iml_DebugTest extends PHPUnit_Framework_TestCase
         Iml_Debug::setSapi('cgi');
         $label = '<h1>A LABEL</h1>';
         $result = Iml_Debug::dumpLogEvents($this->_events, $label, false);
-        $expected = $label . ': ' . PHP_EOL .$this->_expected;
+        $expected = strip_tags($label) . ': ' . PHP_EOL .$this->_expected;
         $this->assertEquals($expected, $result);
     }
 
