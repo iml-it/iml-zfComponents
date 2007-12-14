@@ -77,6 +77,36 @@ class Iml_Mail_Transport_Mock extends Zend_Mail_Transport_Abstract
  */
 class Iml_Log_Writer_MailTest extends PHPUnit_Framework_TestCase
 {
+    protected  $_mock = null;
+    protected  $_mail = null;
+
+    /**
+     * Setup fixtures for the tests. Most tests use
+     * an instance of Zend_Mail with a mock transport
+     * to not actually send a mail. Properties of the
+     * mail sent can be fetched from the mock transport.
+     */
+    protected function setUp()
+    {
+        $this->_mail = new Zend_Mail();
+        $this->_mail->setFrom('testmail@example.com', 'test Mail User');
+        $this->_mail->setSubject('Test Subject');
+        $this->_mail->addTo('recipient1@example.com');
+
+        $this->_mock = new Iml_Mail_Transport_Mock();
+        $this->_mail->setDefaultTransport($this->_mock);
+    }
+
+    /**
+     * Destroy fixtures after test.
+     *
+     */
+    protected function tearDown()
+    {
+        $this->_mock = null;
+        $this->_mail = null;
+    }
+
     /**
      * Test case for the contructor which should throw an exception if
      * no valid Zend_Mail object is passed
@@ -109,21 +139,13 @@ class Iml_Log_Writer_MailTest extends PHPUnit_Framework_TestCase
      */
     public function testWrite()
     {
-        $mail = new Zend_Mail();
-        $mail->setFrom('testmail@example.com', 'test Mail User');
-        $mail->setSubject('Test Subject');
-        $mail->addTo('recipient1@example.com');
-
-        $mock = new Iml_Mail_Transport_Mock();
-        $mail->setDefaultTransport($mock);
-
         $event = array('message' => 'A test log message');
 
-        $logwriter = new Iml_Log_Writer_Mail($mail);
+        $logwriter = new Iml_Log_Writer_Mail($this->_mail);
         $logwriter->write($event);
 
-        $this->assertTrue($mock->called);
-        $this->assertContains('A test log message', $mock->body);
+        $this->assertTrue($this->_mock->called);
+        $this->assertContains('A test log message', $this->_mock->body);
     }
 
     /**
@@ -132,17 +154,9 @@ class Iml_Log_Writer_MailTest extends PHPUnit_Framework_TestCase
      */
     public function testShutdownDestroysMailObject()
     {
-        $mail = new Zend_Mail();
-        $mail->setFrom('testmail@example.com', 'test Mail User');
-        $mail->setSubject('Test Subject');
-        $mail->addTo('recipient1@example.com');
-
-        $mock = new Iml_Mail_Transport_Mock();
-        $mail->setDefaultTransport($mock);
-
         $event = array('message' => 'A test log message');
 
-        $logwriter = new Iml_Log_Writer_Mail($mail);
+        $logwriter = new Iml_Log_Writer_Mail($this->_mail);
         $logwriter->shutdown();
 
         try {
@@ -159,22 +173,14 @@ class Iml_Log_Writer_MailTest extends PHPUnit_Framework_TestCase
      */
     public function testSettingNewFormatter()
     {
-        $mail = new Zend_Mail();
-        $mail->setFrom('testmail@example.com', 'test Mail User');
-        $mail->setSubject('Test Subject');
-        $mail->addTo('recipient1@example.com');
-
-        $mock = new Iml_Mail_Transport_Mock();
-        $mail->setDefaultTransport($mock);
-
         $expected = 'foo';
 
         $formatter = new Zend_Log_Formatter_Simple($expected);
-        $logwriter = new Iml_Log_Writer_Mail($mail);
+        $logwriter = new Iml_Log_Writer_Mail($this->_mail);
         $logwriter->setFormatter($formatter);
 
         $logwriter->write(array('bar' => 'baz'));
 
-        $this->assertContains($expected, $mock->body);
+        $this->assertContains($expected, $this->_mock->body);
     }
 }
