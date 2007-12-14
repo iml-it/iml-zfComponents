@@ -77,8 +77,19 @@ class Iml_Mail_Transport_Mock extends Zend_Mail_Transport_Abstract
  */
 class Iml_Log_Writer_MailTest extends PHPUnit_Framework_TestCase
 {
-    protected  $_mock = null;
-    protected  $_mail = null;
+    /**
+     * fixture for the mail transport mock object
+     *
+     * @var null|Iml_Mail_Transport_Mock
+     */
+    protected $_mock = null;
+
+    /**
+     * fixture for the mail object used in the tests
+     *
+     * @var null|Zend_Mail
+     */
+    protected $_mail = null;
 
     /**
      * Setup fixtures for the tests. Most tests use
