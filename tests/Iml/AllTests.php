@@ -27,6 +27,7 @@ if (!defined('PHPUnit_MAIN_METHOD')) {
     define('PHPUnit_MAIN_METHOD', 'Zend_AllTests::main');
 }
 
+require_once 'Iml/DebugTest.php';
 require_once 'Iml/Log/AllTests.php';
 
 /**
@@ -47,6 +48,7 @@ class Iml_AllTests
     {
         $suite = new PHPUnit_Framework_TestSuite('IML Zend Framework Components - Iml');
 
+        $suite->addTestSuite('Iml_DebugTest');
         $suite->addTest(Iml_Log_AllTests::suite());
 
         return $suite;
