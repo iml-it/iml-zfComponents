@@ -12,7 +12,6 @@
  *
  * @category   Iml
  * @package    Iml_Debug
- * @subpackage Writer
  * @copyright  Copyright (c) 2007 Institute for Medical Education, University of Bern (http://www.iml.unibe.ch)
  * @license    http://creativecommons.org/licenses/by-sa/2.5/ch/     CC-By-Sa
  * @version    $Id$
@@ -36,7 +35,6 @@ require_once 'Zend/Log/Formatter/Simple.php';
 /**
  * @category   Iml
  * @package    Iml_Debug
- * @subpackage Writer
  * @copyright  Copyright (c) 2007 Institute for Medical Education, University of Bern (http://www.iml.unibe.ch)
  * @license    http://creativecommons.org/licenses/by-sa/2.5/ch/     CC-By-Sa
  */
