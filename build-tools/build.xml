@@ -2,6 +2,7 @@
 <project name="iml-zfComponents" default="usage" basedir=".">
     <property name="project.name" value="iml-zfComponents" />
     <property name="project.title" value="IML Zend Framework Components" />
+    <property name="project.revision" value="1" />
     <property name="dir.base" value="${project.basedir}/.." />
     <property name="dir.build" value="${dir.base}/build" />
     <property name="dir.build-tools" value="${dir.base}/build-tools" />
@@ -13,8 +14,28 @@
     <taskdef classname="PhpCodeSnifferExternalTask" name="phpcodesniffer" classpath="${dir.build-tools}/phing/tasks" />
     <taskdef classname="PhpCodeSnifferReportTask" name="phpcodesnifferreport" classpath="${dir.build-tools}/phing/tasks" />
 
-    <target name="build.continuous" depends="clean,prepare,test,codesniff">
-        <echo msg="Done." />
+    <target name="build.continuous">
+        <echo msg="Task build.continuous starts." />
+        <phingcall target="environment" />
+        <phingcall target="svn.revision" />
+        <property name="revision.last" value="${project.revision}" />
+        <phingcall target="svn.update" />
+        <phingcall target="svn.revision" />
+        <if>
+            <equals arg1="${revision.last}" arg2="${project.revision}" />
+            <then>
+                <echo message="Noch dieselbe revision. Nix tun." />
+            </then>
+            <else>
+                <echo message="Neue revision, neuer build einleiten." />
+            </else>
+        </if>
+        <phingcall target="clean" />
+        <phingcall target="prepare" />
+        <phingcall target="test" />
+        <phingcall target="codesniff" />
+        <echo msg="Letzte Revision: ${revision.last} : Nach update: ${project.revision}" />
+        <echo msg="Task build.continuous done." />
     </target>
 
     <target name="prepare" depends="clean">
@@ -81,6 +102,21 @@
         </phpdoc>
     </target>
 
+    <target name="svn.revision">
+        <svnlastrevision
+        svnpath="svn"
+        workingcopy="${dir.base}"
+        propertyname="current.revision" />
+    </target>
+
+    <target name="svn.update">
+        <svnupdate
+        svnpath="svn"
+        username="phing"
+        password="phingpass"
+        todir="${dir.base}" />
+    </target>
+
     <target name="clean" description="Removed generated files.">
         <delete dir="${dir.build}" failonerror="false" verbose="true" />
     </target>
@@ -93,6 +129,16 @@
         <echo message="    * apidoc.stage" />
         <echo message="  * test" />
         <echo message="  * codesniff" />
+    </target>
+
+    <target name="environment" description="Prints some properties to the log.">
+        <echo message="project.name:${project.name}" />
+        <echo message="project.title:${project.title}" />
+        <echo message="dir.base:${dir.base}" />
+        <echo message="dir.logs:${dir.logs}" />
+        <echo message="dir.reports:${dir.reports}" />
+        <echo message="dir.web:${dir.web}" />
+        <echo message="$dir.apidoc:${dir.apidoc}" />
     </target>
 
 </project>
