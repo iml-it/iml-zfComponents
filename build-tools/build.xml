@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="iml-zfComponents" default="usage" basedir=".">
+    <property name="project.name" value="iml-zfComponents" />
+    <property name="project.title" value="IML Zend Framework Components" />
+    <property name="dir.base" value="${project.basedir}/.." />
+    <property name="dir.build" value="${dir.base}/build" />
+    <property name="dir.build-tools" value="${dir.base}/build-tools" />
+    <property name="dir.build-stylesheets" value="${dir.build-tools}/xsl" />
+    <property name="dir.logs" value="${dir.build}/logs" />
+    <property name="dir.reports" value="${dir.build}/reports" />
+    <property name="dir.web" value="${dir.build}/web" />
+    <property name="dir.apidoc" value="${dir.web}/apidoc" />
+    <taskdef classname="PhpCodeSnifferExternalTask" name="phpcodesniffer" classpath="${dir.build-tools}/phing/tasks" />
+    <taskdef classname="PhpCodeSnifferReportTask" name="phpcodesnifferreport" classpath="${dir.build-tools}/phing/tasks" />
+
+    <target name="build.continuous" depends="clean,prepare,test,codesniff">
+        <echo msg="Done." />
+    </target>
+
+    <target name="prepare" depends="clean">
+        <mkdir dir="${dir.build}" />
+        <mkdir dir="${dir.logs}" />
+        <mkdir dir="${dir.reports}" />
+        <mkdir dir="${dir.web}" />
+    </target>
+
+    <target name="test">
+        <mkdir dir="${dir.logs}" />
+        <mkdir dir="${dir.web}" />
+        <phpunit2>
+            <formatter todir="${dir.logs}" type="xml" outfile="phpunit_testresults.xml" />
+            <batchtest>
+                <fileset dir="${dir.base}/tests">
+                    <include name="**/*Test.php" />
+                    <exclude name="**/AllTests.php" />
+                    <exclude name="TestConfiguraton*" />
+                    <exclude name="TestHelper.php" />
+                </fileset>
+            </batchtest>
+        </phpunit2>
+        <phpunit2report format="noframes" styledir="${dir.build-stylesheets}" infile="${dir.logs}/phpunit_testresults.xml" todir="${dir.web}" />
+    </target>
+
+    <target name="codesniff" description="Does the code sniffing on project.">
+        <mkdir dir="${dir.logs}" />
+        <mkdir dir="${dir.reports}" />
+        <mkdir dir="${dir.web}" />
+        <phpcodesniffer report="checkstyle" standard="Zend" todir="${dir.logs}" outfile="phpcs_testresults.xml">
+            <fileset dir="${dir.base}">
+                <include name="library/Iml/**/*.php" />
+                <include name="tests/**/*Test.php" />
+            </fileset>
+        </phpcodesniffer>
+        <phpcodesnifferreport format="brief" styledir="${dir.build-stylesheets}" infile="${dir.logs}/phpcs_testresults.xml" todir="${dir.web}" />
+        <phpcodesnifferreport format="details" styledir="${dir.build-stylesheets}" infile="${dir.logs}/phpcs_testresults.xml" todir="${dir.web}" />
+    </target>
+
+    <target name="apidoc.build">
+        <mkdir dir="${dir.apidoc}" />
+        <phpdoc title="${project.title}"
+            destdir="${dir.apidoc}"
+            sourcecode="yes"
+            output="HTML:frames:DOM/earthli">
+            <fileset dir="${dir.base}">
+                <include name="library/**/*.php" />
+                <exclude name="library/Zend/**/*.php" />
+                <include name="tests/**/*Test.php" />
+            </fileset>
+        </phpdoc>
+    </target>
+
+    <target name="apidoc.stage">
+        <mkdir dir="${dir.apidoc}" />
+        <phpdoc title="${project.title}"
+            destdir="${dir.apidoc}"
+            sourcecode="yes"
+            output="HTML:frames:DOM/earthli">
+            <fileset dir="${dir.base}">
+                <include name="library/**/*.php" />
+            </fileset>
+        </phpdoc>
+    </target>
+
+    <target name="clean" description="Removed generated files.">
+        <delete dir="${dir.build}" failonerror="false" verbose="true" />
+    </target>
+
+    <target name="usage" description="Prints out a list of possible target.">
+        <echo message="Possible targets to call:" />
+        <echo message="  * build.continuous" />
+        <echo message="    * apidoc.build" />
+        <echo message="  * stage" />
+        <echo message="    * apidoc.stage" />
+        <echo message="  * test" />
+        <echo message="  * codesniff" />
+    </target>
+
+</project>
