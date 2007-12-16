@@ -11,9 +11,10 @@
  * Commons, 171 Second Street, Suite 300, San Francisco, California, 94105, USA.
  *
  * @category   Iml
- * @package    Iml_Dump
+ * @package    Iml_Debug
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2007 Institute for Medical Education, University of Bern (http://www.iml.unibe.ch)
+ * @author     Michael Rolli <michael.rolli@iml.unibe.ch>
  * @license    http://creativecommons.org/licenses/by-sa/2.5/ch/     CC-By-Sa
  * @version    $Id$
  */
@@ -41,7 +42,9 @@ require_once 'Zend/Log/Formatter/Simple.php';
 /**
  * @category   Iml
  * @package    Iml_Debug
+ * @subpackage UnitTests
  * @copyright  Copyright (c) 2007 Institute for Medical Education, University of Bern (http://www.iml.unibe.ch)
+ * @author     Michael Rolli <michael.rolli@iml.unibe.ch>
  * @license    http://creativecommons.org/licenses/by-sa/2.5/ch/     CC-By-Sa
  */
 class Iml_DebugTest extends PHPUnit_Framework_TestCase

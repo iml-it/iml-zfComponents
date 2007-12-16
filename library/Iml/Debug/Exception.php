@@ -1,7 +1,7 @@
 <?php
 
 /**
- * IML LCMS
+ * IML Zend Framework Components
  *
  * LICENSE
  *
@@ -13,6 +13,7 @@
  * @category   Iml
  * @package    Iml_Debug
  * @copyright  Copyright (c) 2007 Institute for Medical Education, University of Bern (http://www.iml.unibe.ch)
+ * @author     Michael Rolli <michael.rolli@iml.unibe.ch>
  * @license    http://creativecommons.org/licenses/by-sa/2.5/ch/     CC-By-Sa
  * @version    $Id$
  */
@@ -23,9 +24,15 @@
 require_once 'Zend/Exception.php';
 
 /**
+ * Exception class for the Iml_Debug package
+ *
+ * Classes from the Iml_Debug package should throw this
+ * exception type.
+ *
  * @category   Iml
  * @package    Iml_Debug
  * @copyright  Copyright (c) 2007 Institute for Medical Education, University of Bern (http://www.iml.unibe.ch)
+ * @author     Michael Rolli <michael.rolli@iml.unibe.ch>
  * @license    http://creativecommons.org/licenses/by-sa/2.5/ch/     CC-By-Sa
  */
 class Iml_Debug_Exception extends Zend_Exception

@@ -14,6 +14,7 @@
  * @package    Iml_Log
  * @subpackage Writer
  * @copyright  Copyright (c) 2007 Institute for Medical Education, University of Bern (http://www.iml.unibe.ch)
+ * @author     Michael Rolli <michael.rolli@iml.unibe.ch>
  * @license    http://creativecommons.org/licenses/by-sa/2.5/ch/     CC-By-Sa
  * @version    $Id$
  */
@@ -39,6 +40,7 @@ require_once 'Zend/Log/Formatter/Simple.php';
  * @package    Iml_Log
  * @subpackage Writer
  * @copyright  Copyright (c) 2007 Institute for Medical Education, University of Bern (http://www.iml.unibe.ch)
+ * @author     Michael Rolli <michael.rolli@iml.unibe.ch>
  * @license    http://creativecommons.org/licenses/by-sa/2.5/ch/     CC-By-Sa
  */
 class Iml_Log_Writer_Mail extends Zend_Log_Writer_Abstract
@@ -63,7 +65,7 @@ class Iml_Log_Writer_Mail extends Zend_Log_Writer_Abstract
             $this->_formatter = new Zend_Log_Formatter_Simple();
         } else {
             throw new Zend_Log_Exception('First parameter must be an instance of Zend_Mail, ' . gettype($mail) . ' given');
-        }	
+        }
     }
 
     /**

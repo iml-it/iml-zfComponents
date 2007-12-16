@@ -1,7 +1,7 @@
 <?php
 
 /**
- * IML ZendFramework Components
+ * IML Zend Framework Components
  *
  * LICENSE
  *
@@ -13,6 +13,7 @@
  * @category   Iml
  * @package    Iml_Debug
  * @copyright  Copyright (c) 2007 Institute for Medical Education, University of Bern (http://www.iml.unibe.ch)
+ * @author     Michael Rolli <michael.rolli@iml.unibe.ch>
  * @license    http://creativecommons.org/licenses/by-sa/2.5/ch/     CC-By-Sa
  * @version    $Id$
  */
@@ -33,9 +34,15 @@ require_once 'Zend/Debug.php';
 require_once 'Zend/Log/Formatter/Simple.php';
 
 /**
+ * Mulitpurpose Debugging Class
+ *
+ * In addition to the Zend_Debug base class this class provides some
+ * helpful functions to use while debugging.
+ *
  * @category   Iml
  * @package    Iml_Debug
  * @copyright  Copyright (c) 2007 Institute for Medical Education, University of Bern (http://www.iml.unibe.ch)
+ * @author     Michael Rolli <michael.rolli@iml.unibe.ch>
  * @license    http://creativecommons.org/licenses/by-sa/2.5/ch/     CC-By-Sa
  */
 class Iml_Debug extends Zend_Debug

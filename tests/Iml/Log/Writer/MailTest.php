@@ -14,6 +14,7 @@
  * @package    Iml_Log
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2007 Institute for Medical Education, University of Bern (http://www.iml.unibe.ch)
+ * @author     Michael Rolli <michael.rolli@iml.unibe.ch>
  * @license    http://creativecommons.org/licenses/by-sa/2.5/ch/     CC-By-Sa
  * @version    $Id$
  */
@@ -41,10 +42,11 @@ require_once 'Zend/Mail/Transport/Abstract.php';
 /**
  * Mock mail transport class for testing purposes
  *
- * @category   Zend
- * @package    Zend_Mail
+ * @category   Iml
+ * @package    Iml_Mail
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @author     Michael Rolli <michael.rolli@iml.unibe.ch>
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Iml_Mail_Transport_Mock extends Zend_Mail_Transport_Abstract
@@ -71,8 +73,9 @@ class Iml_Mail_Transport_Mock extends Zend_Mail_Transport_Abstract
 /**
  * @category   Iml
  * @package    Iml_Log
- * @subpackage Writer
+ * @subpackage UnitTests
  * @copyright  Copyright (c) 2007 Institute for Medical Education, University of Bern (http://www.iml.unibe.ch)
+ * @author     Michael Rolli <michael.rolli@iml.unibe.ch>
  * @license    http://creativecommons.org/licenses/by-sa/2.5/ch/     CC-By-Sa
  */
 class Iml_Log_Writer_MailTest extends PHPUnit_Framework_TestCase
