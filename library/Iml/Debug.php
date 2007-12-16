@@ -52,7 +52,7 @@ class Iml_Debug extends Zend_Debug
      */
     public static function dumpLogEvents($events, $label=null, $echo=true)
     {
-        if(!is_array($events)) {
+        if (!is_array($events)) {
             throw new Iml_Debug_Exception('Array expected for argument 1, ' . gettype($events) . ' given');
         }
         // format label
