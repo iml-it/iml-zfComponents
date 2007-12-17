@@ -87,7 +87,9 @@ class Iml_Debug extends Zend_Debug
         foreach ($events as $event) {
             $formatted .= $formatter->format($event) . PHP_EOL;
         }
-        $output .= (self::getSapi() == 'cli') ? $formatted : '<table>' . PHP_EOL . $formatted . '</table>' . PHP_EOL;
+        $output .= (self::getSapi() == 'cli') 
+                   ? $formatted 
+                   : '<table>' . PHP_EOL . $formatted . '</table>' . PHP_EOL;
 
         if ($echo) {
             echo($output);
