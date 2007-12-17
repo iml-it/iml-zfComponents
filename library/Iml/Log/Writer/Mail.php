@@ -63,7 +63,7 @@ class Iml_Log_Writer_Mail extends Zend_Log_Writer_Abstract
      */
     public function __construct($mail)
     {
-        if($mail instanceof Zend_Mail) {
+        if ($mail instanceof Zend_Mail) {
             $this->_mail = $mail;
             $this->_formatter = new Zend_Log_Formatter_Simple();
         } else {
