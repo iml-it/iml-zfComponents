@@ -64,13 +64,13 @@ class Iml_Debug extends Zend_Debug
     {
         if (!is_array($events)) {
             throw new Iml_Debug_Exception('Array expected for argument 1, '
-					  . gettype($events) . ' given');
+                                         . gettype($events) . ' given');
         }
         // format label
         $output = ($label===null) ? '' : trim(strip_tags($label)) . ': ';
         $output = ($label !== null && self::getSapi() != 'cli') 
-			? $output . PHP_EOL 
-			: $output;
+                        ? $output . PHP_EOL 
+                        : $output;
 
         // use a Zend_Log_Formatter_Simple to do the job
         if (self::getSapi() != 'cli') {
