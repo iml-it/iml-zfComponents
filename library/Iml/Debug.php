@@ -8,7 +8,8 @@
  * This work is licensed under the Creative Commons Attribution-Share Alike 2.5
  * Switzerland License. To view a copy of this license, visit
  * http://creativecommons.org/licenses/by-sa/2.5/ch/ or send a letter to
- * Creative Commons, 171 Second Street, Suite 300, San Francisco, California, 94105, USA.
+ * Creative Commons, 171 Second Street, Suite 300, San Francisco, California,
+ * 94105, USA.
  *
  * @category   Iml
  * @package    Iml_Debug
