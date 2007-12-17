@@ -68,7 +68,9 @@ class Iml_Debug extends Zend_Debug
         }
         // format label
         $output = ($label===null) ? '' : trim(strip_tags($label)) . ': ';
-        $output = ($label !== null && self::getSapi() != 'cli') ? $output . PHP_EOL : $output;
+        $output = ($label !== null && self::getSapi() != 'cli') 
+			? $output . PHP_EOL 
+			: $output;
 
         // use a Zend_Log_Formatter_Simple to do the job
         if (self::getSapi() != 'cli') {
