@@ -67,7 +67,9 @@ class Iml_Log_Writer_Mail extends Zend_Log_Writer_Abstract
             $this->_mail = $mail;
             $this->_formatter = new Zend_Log_Formatter_Simple();
         } else {
-            throw new Zend_Log_Exception('First parameter must be an instance of Zend_Mail, ' . gettype($mail) . ' given');
+            throw new Zend_Log_Exception('First parameter must be an '
+					.'instance of Zend_Mail, ' 
+					. gettype($mail) . ' given');
         }
     }
 
