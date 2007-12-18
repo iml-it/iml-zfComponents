@@ -74,7 +74,8 @@ class Iml_Debug extends Zend_Debug
 
         // use a Zend_Log_Formatter_Simple to do the job
         if (self::getSapi() != 'cli') {
-            $format = '<tr><td>%timestamp%</td><td>%priorityName% (%priority%)</td><td>%message%</td></tr>';
+            $format = '<tr><td>%timestamp%</td><td>%priorityName% '
+                     .'(%priority%)</td><td>%message%</td></tr>';
         } else {
             $format = '%timestamp% %priorityName% (%priority%): %message%';
         }
