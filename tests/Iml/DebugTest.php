@@ -7,15 +7,15 @@
  *
  * This work is licensed under the Creative Commons Attribution-Share Alike 2.5
  * Switzerland License. To view a copy of this license, visit
- * http://creativecommons.org/licenses/by-sa/2.5/ch/ or send a letter to 
+ * http://creativecommons.org/licenses/by-sa/2.5/ch/ or send a letter to
  * Creative Commons, 171 Second Street, Suite 300, San Francisco, California,
  * 94105, USA.
  *
  * @category   Iml
  * @package    Iml_Debug
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2007 Institute for Medical Education, University of 
- *             Bern (http://www.iml.unibe.ch)
+ * @copyright  Copyright (c) 2007 Institute for Medical Education,
+ *             University of Bern (http://www.iml.unibe.ch)
  * @author     Michael Rolli <michael.rolli@iml.unibe.ch>
  * @license    http://creativecommons.org/licenses/by-sa/2.5/ch/     CC-By-Sa
  * @version    $Id$
@@ -24,7 +24,8 @@
 /**
  * Test helper
  */
-require_once dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'TestHelper.php';
+require_once dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR
+             . 'TestHelper.php';
 
 /**
  * Iml_Debug
@@ -45,7 +46,8 @@ require_once 'Zend/Log/Formatter/Simple.php';
  * @category   Iml
  * @package    Iml_Debug
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2007 Institute for Medical Education, University of Bern (http://www.iml.unibe.ch)
+ * @copyright  Copyright (c) 2007 Institute for Medical Education,
+ *             University of Bern (http://www.iml.unibe.ch)
  * @author     Michael Rolli <michael.rolli@iml.unibe.ch>
  * @license    http://creativecommons.org/licenses/by-sa/2.5/ch/     CC-By-Sa
  */
@@ -61,7 +63,7 @@ class Iml_DebugTest extends PHPUnit_Framework_TestCase
     /**
      * Expected value for cli output.
      */
-    protected $_expected_cli = null;
+    protected $_expectedCli = null;
 
     /**
      * Expected value for other cases.
@@ -83,13 +85,16 @@ class Iml_DebugTest extends PHPUnit_Framework_TestCase
                             'priorityName' => 'DEBUG',
                             );
 
-        $this->_expected_cli = $this->_events[0]['timestamp'] . ' '
-                             . $this->_events[0]['priorityName'] . ' (' . $this->_events[0]['priority'] . '): '
-                             . $this->_events[0]['message'] . PHP_EOL;
+        $this->_expectedCli = $this->_events[0]['timestamp'] . ' '
+                            . $this->_events[0]['priorityName']
+                            . ' (' . $this->_events[0]['priority'] . '): '
+                            . $this->_events[0]['message'] . PHP_EOL;
 
         $this->_expected     = '<table>' . PHP_EOL
-                             . '<tr><td>' . $this->_events[0]['timestamp'] . '</td>'
-                             . '<td>' . $this->_events[0]['priorityName'] . ' (' . $this->_events[0]['priority'] . ')</td>'
+                             . '<tr><td>' . $this->_events[0]['timestamp']
+                             . '</td>'
+                             . '<td>' . $this->_events[0]['priorityName']
+                             . ' (' . $this->_events[0]['priority'] . ')</td>'
                              . '<td>' . $this->_events[0]['message'] . '</td>'
                              . '</tr>' . PHP_EOL . '</table>' . PHP_EOL;
     }
@@ -126,7 +131,7 @@ class Iml_DebugTest extends PHPUnit_Framework_TestCase
     {
         Iml_Debug::setSapi('cli');
         $result = Iml_Debug::dumpLogEvents($this->_events, null, false);
-        $this->assertEquals($this->_expected_cli, $result);
+        $this->assertEquals($this->_expectedCli, $result);
     }
 
     /**
@@ -151,7 +156,7 @@ class Iml_DebugTest extends PHPUnit_Framework_TestCase
         $result2 = ob_get_contents();
         ob_end_clean();
 
-        $this->assertContains($this->_expected_cli, $result1);
+        $this->assertContains($this->_expectedCli, $result1);
         $this->assertEquals($result1, $result2);
     }
 
@@ -163,7 +168,7 @@ class Iml_DebugTest extends PHPUnit_Framework_TestCase
         Iml_Debug::setSapi('cli');
         $label = '<h1>A LABEL</h1>';
         $result = Iml_Debug::dumpLogEvents($this->_events, $label, false);
-        $expected = strip_tags($label) . ': ' . $this->_expected_cli;
+        $expected = strip_tags($label) . ': ' . $this->_expectedCli;
         $this->assertEquals($expected, $result);
     }
 
