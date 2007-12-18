@@ -1,8 +1,9 @@
 <?xml version="1.0"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 
-    <xsl:output method="html"/>
-    <xsl:include href="phphelper.xsl" />
+    <xsl:output method="html" encoding="UTF-8" indent="yes"/>
+    <xsl:decimal-format decimal-separator="." grouping-separator="," />
+    <xsl:include href="xsl/phphelper.xsl" />
     <xsl:param name="checkstyle.hide.warnings" select="'false'"/>
 
     <xsl:template match="/">
@@ -11,6 +12,7 @@
 
         <div class="codesniffer">
             <xsl:call-template name="checkstyle-summary" />
+            <h2>Details</h2>
             <xsl:apply-templates />
         </div>
     </xsl:template>
@@ -67,7 +69,7 @@
     </xsl:template>
 
     <xsl:template name="checkstyle-summary">
-        <h2>PHP CodeSniffer Summary</h2>
+        <h2>PHP CodeSniffer</h2>
         <dl>
             <dt>Files: </dt>
             <dd><xsl:value-of select="count(/checkstyle/file[error])"/></dd>

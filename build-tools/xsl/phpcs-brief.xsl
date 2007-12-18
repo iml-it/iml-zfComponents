@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 
-    <xsl:output method="html"/>
+    <xsl:output method="html" encoding="UTF-8" indent="yes"/>
+    <xsl:decimal-format decimal-separator="." grouping-separator="," />
     <xsl:param name="checkstyle.hide.warnings" select="'false'"/>
 
     <xsl:template match="/">
