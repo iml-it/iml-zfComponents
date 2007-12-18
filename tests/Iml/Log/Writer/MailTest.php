@@ -13,7 +13,8 @@
  * @category   Iml
  * @package    Iml_Log
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2007 Institute for Medical Education, University of Bern (http://www.iml.unibe.ch)
+ * @copyright  Copyright (c) 2007 Institute for Medical Education, University of 
+ * Bern (http://www.iml.unibe.ch)
  * @author     Michael Rolli <michael.rolli@iml.unibe.ch>
  * @license    http://creativecommons.org/licenses/by-sa/2.5/ch/     CC-By-Sa
  * @version    $Id$
