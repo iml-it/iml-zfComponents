@@ -152,12 +152,12 @@ class Iml_DebugTest extends PHPUnit_Framework_TestCase
         Iml_Debug::setSapi('cli');
 
         ob_start();
-        $result1 = Iml_Debug::dumpLogEvents($this->_events, null, true);
-        $result2 = ob_get_contents();
+        $resultDump = Iml_Debug::dumpLogEvents($this->_events, null, true);
+        $resultBuffer = ob_get_contents();
         ob_end_clean();
 
-        $this->assertContains($this->_expectedCli, $result1);
-        $this->assertEquals($result1, $result2);
+        $this->assertContains($this->_expectedCli, $resultDump);
+        $this->assertEquals($resultDump, $resultBuffer);
     }
 
     /**

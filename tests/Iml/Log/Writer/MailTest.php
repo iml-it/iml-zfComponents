@@ -138,8 +138,7 @@ class Iml_Log_Writer_MailTest extends PHPUnit_Framework_TestCase
         } catch (Exception $e) {
             $this->assertType('Zend_Log_Exception', $e);
             $this->assertRegExp('/must be an instance of Zend_Mail/i',
-                                $e->getMessage()
-                                );
+                                $e->getMessage());
         }
     }
 
@@ -185,8 +184,7 @@ class Iml_Log_Writer_MailTest extends PHPUnit_Framework_TestCase
         } catch (Exception $e) {
             $this->assertType('Zend_Log_Exception', $e);
             $this->assertRegExp('/No mail object available/i',
-                                $e->getMessage()
-                                );
+                                $e->getMessage());
         }
     }
 
