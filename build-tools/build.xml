@@ -17,18 +17,16 @@
     <taskdef classname="PhpCodeSnifferReportTask" name="phpcodesnifferreport" classpath="${dir.build-tools}/phing/tasks" />
     <taskdef classname="SvnLastRevisionDetailsTask" name="svnlastrevisiondetails" classpath="${dir.build-tools}/phing/tasks" />
     <taskdef classname="SvnRevisionLogTask" name="svnrevisionlog" classpath="${dir.build-tools}/phing/tasks" />
+    <taskdef classname="SvnUpdateModifiedTask" name="svnupdatemod" classpath="${dir.build-tools}/phing/tasks" />
 
     <target name="build.continuous" depends="svn.compare, project.xml">
         <if>
             <equals arg1="${project.updated}" arg2="1" />
             <then>
-                <phingcall target="build.general" />
-                <!--<phingcall target="apidoc.build" />-->
+                <phingcall target="build.continuous.forward" />
                 <echo msg="Task build.continuous done." />
             </then>
             <else>
-                <phingcall target="build.continuous.forward" />
-                <!--<phingcall target="apidoc.build" />-->
                 <echo msg="Nothing to do for task build.continous" />
             </else>
         </if>
@@ -103,6 +101,7 @@
         <phpdoc title="${project.title}"
             destdir="${dir.apidoc}"
             sourcecode="yes"
+            quiet="true"
             output="HTML:frames:DOM/earthli">
             <fileset dir="${dir.base}">
                 <include name="library/**/*.php" />
@@ -114,7 +113,7 @@
 
     <target name="apidoc.stage" depends="prepare">
         <phpdoc title="${project.title}"
-            destdir="${dir.build}/apidoc"
+            destdir="${dir.build}/apidoc_full"
             sourcecode="yes"
             output="HTML:frames:DOM/earthli">
             <fileset dir="${dir.base}">
@@ -129,7 +128,7 @@
         workingcopy="${dir.base}"
         propertyname="revision.old" />
 
-        <svnupdate
+        <svnupdatemod
         svnpath="svn"
         username="phing"
         password="phingpass"

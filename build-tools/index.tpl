@@ -4,16 +4,41 @@ if(!file_exists('./project.xml')) {
     die('No project.xml can be found, check your build.xml');
 }
 
-$project = new DOMDocument();
-$project->load('./project.xml');
-$xpath = new DOMXPath($project);
-$entries = $xpath->query('//svninfo/property')->item(0)->nodeValue;
-$simple = new SimpleXMLElement(file_get_contents('./project.xml'));
+$project = new SimpleXMLElement(file_get_contents('./project.xml'));
 
 $action = isset($_GET['action']) ? $_GET['action'] : 'overview';
 
-include '../header.php';
+?>
+<html>
+    <head>
+        <title><?php echo $project->project[0]['title']; ?></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <link type="text/css" rel="stylesheet" href="../css/styles.css"/>
+    </head>
+    <body>
+        <div id="container">
+            <h1><a href="index.php">phpUnderControl</a></h1>
 
+            <div id="info">
+                <a id="changelog">Revision
+                    <strong><?php $nodelist = $project->xpath("//svninfo/property[@name = 'Revision']"); echo $nodelist[0]; ?></strong>
+                    <?php echo getChangelog(15); ?>
+                </a>
+                <br />
+                By <strong><?php $nodelist = $project->xpath("//svninfo/property[@name = 'Last Changed Author']"); echo $nodelist[0]; ?></strong>
+                <br />
+                At <?php $nodelist = $project->xpath("//svninfo/property[@name = 'Last Changed Date']"); echo getDateTime($nodelist[0]); ?>
+                <br />
+            </div>
+
+            <ul class="tabnavigation">
+                <li<?php echo ($action=='overview') ? ' class="selected"' : '' ?>><a href="index.php">Overview</a></li>
+                <li<?php echo ($action=='unittests') ? ' class="selected"' : '' ?>><a href="index.php?action=unittests">Tests</a></li>
+                <li<?php echo ($action=='codesniffer') ? ' class="selected"' : '' ?>><a href="index.php?action=codesniffer">CodeSniffer</a></li>
+                <li<?php echo ($action=='apidoc') ? ' class="selected"' : '' ?>><a href="index.php?action=apidoc">API Documentation</a></li>
+            </ul>
+
+<?php
 switch ($action) {
     case 'overview':
         echo '<h2>SVN Summary</h2>';
@@ -43,7 +68,16 @@ switch ($action) {
 }
 
 if($action != 'apidoc') {
-    include '../footer.php';
+?>
+            <div id="footer">
+                Inspired by <a href="http://www.phpundercontrol.org">phpUnderControl</a>
+                by <a href="http://www.manuel-pichler.de/">Manuel Pichler</a>. Reduced and adapted
+                by <a href="http://www.iml.unibe.ch/">Michael Rolli</a>., IML
+            </div>
+        </div>
+    </body>
+</html>
+<?php
 }
 
 function getDateTime($svndate) {
@@ -55,9 +89,9 @@ function getDateTime($svndate) {
 }
 
 function getChangelog($num=0) {
-    global $simple;
+    global $project;
     $content = '<ul>';
-    $logentries = $simple->xpath('//svnlog/entry');
+    $logentries = $project->xpath('//svnlog/entry');
     $numLogentries = count($logentries);
     if($num > 0) {
         $numLogentries = $num;
