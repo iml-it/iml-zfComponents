@@ -68,7 +68,7 @@
         <mkdir dir="${dir.reports}" />
     </target>
 
-    <target name="test" depends="prepare.continuous" description="Runs the unittests.">
+    <target name="test" depends="prepare.continuous" unless="project.test.disabled" description="Runs the unittests.">
         <phpunit2>
             <formatter todir="${dir.logs}" type="xml" outfile="phpunit_testresults.xml" />
             <batchtest>
@@ -84,7 +84,7 @@
         <xslt style="xsl/phpunit2-brief.xsl" file="${dir.logs}/phpunit_testresults.xml" tofile="${dir.reports}/phpunit2-brief.html" />
     </target>
 
-    <target name="codesniff" description="Does the code sniffing on project.">
+    <target name="codesniff" unless="project.codesniff.disabled" description="Does the code sniffing on project.">
         <mkdir dir="${dir.logs}" />
         <mkdir dir="${dir.reports}" />
         <phpcodesniffer report="checkstyle" standard="Zend" todir="${dir.logs}" outfile="phpcs_testresults.xml">
@@ -97,7 +97,7 @@
         <xslt style="xsl/phpcs-details.xsl" file="${dir.logs}/phpcs_testresults.xml" tofile="${dir.reports}/phpcs-details.html" />
     </target>
 
-    <target name="apidoc.build" depends="prepare.continuous">
+    <target name="apidoc.build" unless="project.apidoc.disabled" depends="prepare.continuous">
         <phpdoc title="${project.title}"
             destdir="${dir.apidoc}"
             sourcecode="yes"
@@ -178,7 +178,7 @@
         <touch file="${project.xmlreport.temp}" />
         <append destFile="${project.xmlreport.temp}" text='&lt;?xml version="1.0" encoding="utf-8"?&gt;' />
         <append destFile="${project.xmlreport.temp}" text='&lt;projects&gt;' />
-        <append destFile="${project.xmlreport.temp}" text='&lt;project name="${project.name}" title="${project.title}"&gt;' />
+        <append destFile="${project.xmlreport.temp}" text='&lt;project name="${project.repository}" title="${project.title}"&gt;' />
         <append destFile="${project.xmlreport.temp}" text='&lt;properties&gt;' />
         <append destFile="${project.xmlreport.temp}" text='&lt;property name="project.revisioninfo"&gt;${svn.info}&lt;/property&gt;' />
         <append destFile="${project.xmlreport.temp}" text='&lt;property name="project.revisionlog"&gt;${svn.log}&lt;/property&gt;' />
