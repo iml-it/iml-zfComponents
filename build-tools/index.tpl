@@ -4,6 +4,12 @@ if(!file_exists('./project.xml')) {
     die('No project.xml can be found, check your build.xml');
 }
 
+require_once '../auth.php';
+$auth->setUsername();
+if(!$auth->hasReadAccess('iml-zfComponents', '/')) {
+    die('You don\'t have access to this repository');
+}
+
 $project = new SimpleXMLElement(file_get_contents('./project.xml'));
 
 $action = isset($_GET['action']) ? $_GET['action'] : 'overview';
