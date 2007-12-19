@@ -52,15 +52,31 @@ switch ($action) {
         echo getChangelog(5);
         echo '</div>';
         echo '<hr />';
-        echo  file_get_contents('reports/phpcs-brief.html');
+        if (file_exists('reports/phpcs-brief.html')) {
+            echo  file_get_contents('reports/phpcs-brief.html');
+        } else {
+            echo '<h2>This project doesn\'t do code sniffing</h2>';
+        }
         echo '<hr />';
-        echo  file_get_contents('reports/phpunit2-brief.html');
+        if (file_exists('reports/phpunit2-brief.html')) {
+            echo  file_get_contents('reports/phpunit2-brief.html');
+        } else {
+            echo "<h2>This project doesn't have tests.</h2>";
+        }
         break;
     case 'unittests':
-        echo  file_get_contents('reports/phpunit2-noframes.html');
+        if (file_exists('reports/phpunit2-noframes.html')) {
+            echo  file_get_contents('reports/phpunit2-noframes.html');
+        } else {
+            echo "<h2>This project doesn't have tests.</h2>";
+        }
         break;
     case 'codesniffer':
-        echo  file_get_contents('reports/phpcs-details.html');
+        if (file_exists('reports/phpcs-details.html')) {
+            echo  file_get_contents('reports/phpcs-details.html');
+        } else {
+            echo '<h2>This project doesn\'t do code sniffing</h2>';
+        }
         break;
     case 'apidoc':
         if (file_exists('./apidoc/index.html')) {
