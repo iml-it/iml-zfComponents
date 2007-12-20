@@ -101,7 +101,7 @@
             destdir="${dir.apidoc}"
             sourcecode="yes"
             quiet="true"
-            output="HTML:frames:DOM/earthli">
+            output="HTML:Smarty:PHP">
             <fileset dir="${dir.base}">
                 <include name="library/**/*.php" />
                 <exclude name="library/Zend/**/*.php" />
