@@ -96,7 +96,7 @@
         <xslt style="xsl/phpcs-details.xsl" file="${dir.logs}/phpcs_testresults.xml" tofile="${dir.reports}/phpcs-details.html" />
     </target>
 
-    <target name="apidoc.build" unless="project.apidoc.disabled" depends="prepare.continuous">
+    <target name="apidoc.build" unless="project.apidoc.disabled" depends="clean.apidoc, prepare.continuous">
         <phpdoc title="${project.title}"
             destdir="${dir.apidoc}"
             sourcecode="yes"
@@ -173,7 +173,7 @@
         maxlogentries="20"
         propertyname="svn.log" />
 
-        <copy file="${dir.build-tools}/index.tpl" tofile="${dir.output}/index.php" overwrite="true"/>
+        <copy file="${dir.build-tools}/tpl/index.tpl" tofile="${dir.output}/index.php" overwrite="true"/>
         <delete file="${project.xmlreport.temp}" failonerror="false" verbose="true" />
         <touch file="${project.xmlreport.temp}" />
         <append destFile="${project.xmlreport.temp}" text='&lt;?xml version="1.0" encoding="utf-8"?&gt;' />
