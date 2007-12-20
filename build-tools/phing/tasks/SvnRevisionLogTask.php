@@ -89,7 +89,7 @@ class SvnRevisionLogTask extends SvnBaseTask
 		            $xmlstring.= '<revision>' . $logEntries[$i]['REVISION']. '</revision>';
 		            $xmlstring.= '<author>' . $logEntries[$i]['AUTHOR'] . '</author>';
 		            $xmlstring.= '<date>' . $logEntries[$i]['DATE'] . '</date>';
-		            $xmlstring.= '<msg>' . $logEntries[$i]['MSG'] . '</msg>';
+		            $xmlstring.= '<msg><![CDATA[' . $logEntries[$i]['MSG'] . ']]></msg>';
 		            $xmlstring.= '</entry>';
 		        } else {
 		            break;
