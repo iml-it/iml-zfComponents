@@ -22,7 +22,7 @@
         <pathelement dir="${dir.base}/library/"/>
     </path>
 
-    <target name="build" depends="clean.all, prepare.continuous, svnupdate, test, codesniff, generate-reports" />
+    <target name="build" depends="clean.all, prepare.continuous, svnupdate, test, codesniff" />
 
     <target name="clean.all" description="Remove all generated files" depends="clean.apidocs, clean.reports">
         <echo msg="Cleaning output directory... " />
@@ -76,6 +76,16 @@
                 </fileset>
             </batchtest>
         </phpunit2>
+
+        <echo msg="Generating report for unittests..." />
+        <mkdir dir="${dir.reports}/unittests" />
+        <phpunit2report infile="${dir.logs}/phpunit_testresults.xml" styledir="xsl" todir="${dir.reports}/unittests" format="frames" />
+
+        <echo msg="Generating report for codecoverage..." />
+        <mkdir dir="${dir.reports}/codecoverage" />
+        <coverage-report outfile="${dir.logs}/coverage.xml">
+            <report todir="${dir.reports}/codecoverage" styledir="xsl"/>
+        </coverage-report>
     </target>
 
     <target name="codesniff" depends="prepare.continuous" unless="project.codesniff.disabled" description="Does the code sniffing on project.">
@@ -85,6 +95,10 @@
                 <include name="tests/**/*Test.php" />
             </fileset>
         </phpcodesniffer>
+
+        <mkdir dir="${dir.reports}/codingstandards" />
+        <echo msg="Generating report for codingstandards..." />
+        <xslt style="xsl/phpcs-noframes.xsl" file="${dir.logs}/phpcs_testresults.xml" tofile="${dir.reports}/codingstandards/details.html" />
     </target>
 
     <target name="apidocs" depends="prepare.continuous" unless="project.apidocs.disabled">
@@ -99,21 +113,6 @@
                 <include name="tests/**/*Test.php" />
             </fileset>
         </phpdoc>
-    </target>
-
-    <target name="generate-reports">
-        <mkdir dir="${dir.reports}/unittests" />
-        <mkdir dir="${dir.reports}/codecoverage" />
-        <mkdir dir="${dir.reports}/codingstandards" />
-
-        <echo msg="Generating report for unittests..." />
-        <phpunit2report infile="${dir.logs}/phpunit_testresults.xml" styledir="xsl" todir="${dir.reports}/unittests" format="frames" />
-        <echo msg="Generating report for codecoverage..." />
-        <coverage-report outfile="${dir.logs}/coverage.xml">
-            <report todir="${dir.reports}/codecoverage" styledir="xsl"/>
-        </coverage-report>
-        <echo msg="Generating report for codingstandards..." />
-        <xslt style="xsl/phpcs-noframes.xsl" file="${dir.logs}/phpcs_testresults.xml" tofile="${dir.reports}/codingstandards/details.html" />
     </target>
 
     <target name="usage" description="Prints out a list of possible target.">
