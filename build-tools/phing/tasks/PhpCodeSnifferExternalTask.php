@@ -102,12 +102,18 @@ class PhpCodeSnifferExternalTask extends Task
 
 		$this->log("Running Php_CodeSniffer...");
 		$command = $this->programpath . " " . $arguments;
-		$return = false;
+		$return = 2;
 		exec($command, $output, $return);
-		if($return) {
-		    $this->log('... and found coding errors in the parsed files.');
-		} else {
-		    throw new BuildException("'Php_CodeSniffer' doesn't seem to be run correctly: Command run was: '$command'");
+        switch ($return) {
+            case 0:
+                $this->log('... Great! No coding standards violations.');
+                break;
+            case 1:
+		        $this->log('... and found coding errors in the parsed files.');
+                break;
+            case 2:
+		        throw new BuildException("'Php_CodeSniffer' doesn't seem to be run correctly: Command run was: '$command'");
+                break;
 		}
 
 	}
