@@ -106,7 +106,7 @@
             destdir="${dir.apidocs}"
             sourcecode="yes"
             quiet="true"
-            output="HTML:Smarty:PHP">
+            output="HTML:frames:earthli">
             <fileset dir="${dir.base}">
                 <include name="library/**/*.php" />
                 <exclude name="library/Zend/**/*.php" />
