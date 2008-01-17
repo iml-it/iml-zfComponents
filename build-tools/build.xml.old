@@ -6,7 +6,7 @@
     <property name="dir.base" value="${project.basedir}/.." />
     <property name="dir.build-tools" value="${dir.base}/build-tools" />
     <property name="dir.build-stylesheets" value="${dir.build-tools}/xsl" />
-    <property name="dir.build" value="${dir.base}/builds" />
+    <property name="dir.build" value="${dir.base}/build" />
     <property name="dir.logs" value="${dir.build}/logs" />
     <property name="dir.reports" value="${dir.output}/reports" />
     <property name="dir.apidoc" value="${dir.output}/apidoc" />
@@ -19,10 +19,31 @@
     <taskdef classname="SvnRevisionLogTask" name="svnrevisionlog" classpath="${dir.build-tools}/phing/tasks" />
     <taskdef classname="SvnUpdateModifiedTask" name="svnupdatemod" classpath="${dir.build-tools}/phing/tasks" />
 
-    <target name="build" depends="clean.all, prepare.continuous, test, codesniff" />
+    <target name="build.continuous" depends="svn.compare, project.xml">
+        <if>
+            <equals arg1="${project.updated}" arg2="1" />
+            <then>
+                <phingcall target="build.continuous.forward" />
+                <echo msg="Task build.continuous done." />
+            </then>
+            <else>
+                <echo msg="Nothing to do for task build.continous" />
+            </else>
+        </if>
+        <phingcall target="finish" />
+    </target>
 
-    <target name="clean.all" description="Remove all generated files" depends="clean.apidoc, clean.reports">
+    <target name="build.continuous.forward" depends="clean.all, prepare.continuous, test, codesniff" />
+    <target name="build.general" depends="clean.all, prepare, test, codesniff" />
+
+    <target name="clean.all" description="Remove all generated files" depends="clean.apidoc, clean.reports, clean.stage">
         <echo msg="Cleaning output directory... " />
+        <delete dir="${dir.output}" failonerror="false" verbose="true" />
+    </target>
+
+    <target name="clean.stage" description="Remove build Directory.">
+        <echo msg="Cleaning up build directory..." />
+        <delete dir="${dir.build}" failonerror="false" verbose="true" />
     </target>
 
     <target name="clean.reports" description="Remove generated reports and result logs">
@@ -38,10 +59,11 @@
 
     <target name="prepare">
         <mkdir dir="${dir.build}" />
+        <mkdir dir="${dir.logs}" />
     </target>
 
     <target name="prepare.continuous" depends="prepare">
-        <mkdir dir="${dir.logs}" />
+        <mkdir dir="${dir.output}" />
         <mkdir dir="${dir.reports}" />
     </target>
 
@@ -99,13 +121,79 @@
         </phpdoc>
     </target>
 
+    <target name="svn.compare">
+        <svnlastrevision
+        svnpath="svn"
+        workingcopy="${dir.base}"
+        propertyname="revision.old" />
+
+        <svnupdatemod
+        svnpath="svn"
+        username="phing"
+        password="phingpass"
+        todir="${dir.base}" />
+
+        <svnlastrevision
+        svnpath="svn"
+        workingcopy="${dir.base}"
+        propertyname="revision.new" />
+
+        <if>
+            <equals arg1="${revision.old}" arg2="${revision.new}" />
+            <then>
+                <property name="project.revision" value="${revision.old}" override="true" />
+                <echo msg="There were no commits to the SVN repository. Current revision: ${revision.old}." />
+            </then>
+            <else>
+                <property name="project.revision" value="${revision.new}" override="true" />
+                <echo msg="The SVN repository was updated! Current revision: ${revision.new}." />
+                <property name="project.updated" value="1" override="true" />
+            </else>
+        </if>
+    </target>
+
     <target name="usage" description="Prints out a list of possible target.">
         <echo message="Possible targets to call:" />
-        <echo message="  * build" />
-        <echo message="  * apidoc.build" />
+        <echo message="  * build.continuous" />
+        <echo message="    * apidoc.build" />
         <echo message="  * apidoc.stage" />
         <echo message="  * test" />
         <echo message="  * codesniff" />
+    </target>
+
+    <target name="project.xml" description="Prints some properties to the log.">
+        <svnlastrevisiondetails
+        svnpath="svn"
+        workingcopy="${dir.base}"
+        propertyname="svn.info" />
+
+        <svnrevisionlog
+        svnpath="svn"
+        workingcopy="${dir.base}"
+        maxlogentries="20"
+        propertyname="svn.log" />
+
+        <copy file="${dir.build-tools}/tpl/index.tpl" tofile="${dir.output}/index.php" overwrite="true"/>
+        <delete file="${project.xmlreport.temp}" failonerror="false" verbose="true" />
+        <touch file="${project.xmlreport.temp}" />
+        <append destFile="${project.xmlreport.temp}" text='&lt;?xml version="1.0" encoding="utf-8"?&gt;' />
+        <append destFile="${project.xmlreport.temp}" text='&lt;projects&gt;' />
+        <append destFile="${project.xmlreport.temp}" text='&lt;project name="${project.repository}" title="${project.title}"&gt;' />
+        <append destFile="${project.xmlreport.temp}" text='&lt;properties&gt;' />
+        <append destFile="${project.xmlreport.temp}" text='&lt;property name="project.revisioninfo"&gt;${svn.info}&lt;/property&gt;' />
+        <append destFile="${project.xmlreport.temp}" text='&lt;property name="project.revisionlog"&gt;${svn.log}&lt;/property&gt;' />
+        <append destFile="${project.xmlreport.temp}" text='&lt;property name="dir.base"&gt;${dir.base}&lt;/property&gt;' />
+        <append destFile="${project.xmlreport.temp}" text='&lt;property name="dir.logs"&gt;${dir.logs}&lt;/property&gt;' />
+        <append destFile="${project.xmlreport.temp}" text='&lt;property name="dir.reports"&gt;${dir.reports}&lt;/property&gt;' />
+        <append destFile="${project.xmlreport.temp}" text='&lt;property name="dir.apidoc"&gt;${dir.apidoc}&lt;/property&gt;' />
+        <append destFile="${project.xmlreport.temp}" text='&lt;/properties&gt;' />
+        <append destFile="${project.xmlreport.temp}" text="&lt;/project&gt;" />
+        <append destFile="${project.xmlreport.temp}" text="&lt;/projects&gt;" />
+    </target>
+
+    <target name="finish" description="moving project.xml from temp folder to destination">
+        <move file="${project.xmlreport.temp}" tofile="${project.xmlreport}" overwrite="true"/>
+        <echo msg="Finishing build..." />
     </target>
 
 </project>
