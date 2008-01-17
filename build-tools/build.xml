@@ -9,7 +9,7 @@
     <property name="dir.build" value="${dir.base}/builds" />
     <property name="dir.logs" value="${dir.build}/logs" />
     <property name="dir.reports" value="${dir.output}/reports" />
-    <property name="dir.apidoc" value="${dir.output}/apidoc" />
+    <property name="dir.apidocs" value="${dir.output}/apidocs" />
     <property name="dir.temp" value="${dir.build-tools}/temp" />
     <property name="project.xmlreport" value="${dir.output}/project.xml" />
     <property name="project.xmlreport.temp" value="${dir.temp}/project.xml" />
@@ -18,10 +18,13 @@
     <taskdef classname="SvnLastRevisionDetailsTask" name="svnlastrevisiondetails" classpath="${dir.build-tools}/phing/tasks" />
     <taskdef classname="SvnRevisionLogTask" name="svnrevisionlog" classpath="${dir.build-tools}/phing/tasks" />
     <taskdef classname="SvnUpdateModifiedTask" name="svnupdatemod" classpath="${dir.build-tools}/phing/tasks" />
+    <path id="project.class.path">
+        <pathelement dir="${dir.base}/library/"/>
+    </path>
 
-    <target name="build" depends="clean.all, prepare.continuous, test, codesniff" />
+    <target name="build" depends="clean.all, prepare.continuous, test, codesniff, generate-reports" />
 
-    <target name="clean.all" description="Remove all generated files" depends="clean.apidoc, clean.reports">
+    <target name="clean.all" description="Remove all generated files" depends="clean.apidocs, clean.reports">
         <echo msg="Cleaning output directory... " />
     </target>
 
@@ -31,9 +34,9 @@
         <delete dir="${dir.logs}" failonerror="false" verbose="true" />
     </target>
 
-    <target name="clean.apidoc" description="Remove apidoc files.">
+    <target name="clean.apidocs" description="Remove apidoc files.">
         <echo msg="Cleaning up apidocs..." />
-        <delete dir="${dir.apidoc}" failonerror="false" verbose="true" />
+        <delete dir="${dir.apidocs}" failonerror="false" verbose="true" />
     </target>
 
     <target name="prepare">
@@ -43,10 +46,17 @@
     <target name="prepare.continuous" depends="prepare">
         <mkdir dir="${dir.logs}" />
         <mkdir dir="${dir.reports}" />
+        <mkdir dir="${dir.apidocs}" />
     </target>
 
     <target name="test" depends="prepare.continuous" unless="project.test.disabled" description="Runs the unittests.">
-        <phpunit2>
+        <coverage-setup database="${dir.temp}/coverage.db">
+            <classpath refid="project.class.path" />
+            <fileset dir="${dir.base}/library">
+                <include name="Iml/**/*.php"/>
+            </fileset>
+        </coverage-setup>
+        <phpunit2 codecoverage="true">
             <formatter todir="${dir.logs}" type="xml" outfile="phpunit_testresults.xml" />
             <batchtest>
                 <fileset dir="${dir.base}/tests">
@@ -57,26 +67,20 @@
                 </fileset>
             </batchtest>
         </phpunit2>
-        <xslt style="xsl/phpunit2-noframes.xsl" file="${dir.logs}/phpunit_testresults.xml" tofile="${dir.reports}/phpunit2-noframes.html" />
-        <xslt style="xsl/phpunit2-brief.xsl" file="${dir.logs}/phpunit_testresults.xml" tofile="${dir.reports}/phpunit2-brief.html" />
     </target>
 
-    <target name="codesniff" unless="project.codesniff.disabled" description="Does the code sniffing on project.">
-        <mkdir dir="${dir.logs}" />
-        <mkdir dir="${dir.reports}" />
+    <target name="codesniff" depends="prepare.continuous" unless="project.codesniff.disabled" description="Does the code sniffing on project.">
         <phpcodesniffer report="checkstyle" standard="Zend" todir="${dir.logs}" outfile="phpcs_testresults.xml">
             <fileset dir="${dir.base}">
                 <include name="library/Iml/**/*.php" />
                 <include name="tests/**/*Test.php" />
             </fileset>
         </phpcodesniffer>
-        <xslt style="xsl/phpcs-brief.xsl" file="${dir.logs}/phpcs_testresults.xml" tofile="${dir.reports}/phpcs-brief.html" />
-        <xslt style="xsl/phpcs-details.xsl" file="${dir.logs}/phpcs_testresults.xml" tofile="${dir.reports}/phpcs-details.html" />
     </target>
 
-    <target name="apidoc.build" unless="project.apidoc.disabled" depends="clean.apidoc, prepare.continuous">
+    <target name="apidocs" depends="prepare.continuous" unless="project.apidocs.disabled">
         <phpdoc title="${project.title}"
-            destdir="${dir.apidoc}"
+            destdir="${dir.apidocs}"
             sourcecode="yes"
             quiet="true"
             output="HTML:Smarty:PHP">
@@ -88,24 +92,27 @@
         </phpdoc>
     </target>
 
-    <target name="apidoc.stage" depends="prepare">
-        <phpdoc title="${project.title}"
-            destdir="${dir.build}/apidoc_full"
-            sourcecode="yes"
-            output="HTML:frames:DOM/earthli">
-            <fileset dir="${dir.base}">
-                <include name="library/**/*.php" />
-            </fileset>
-        </phpdoc>
+    <target name="generate-reports">
+        <mkdir dir="${dir.reports}/unittests" />
+        <mkdir dir="${dir.reports}/codecoverage" />
+        <mkdir dir="${dir.reports}/codingstandards" />
+
+        <echo msg="Generating report for unittests..." />
+        <phpunit2report infile="${dir.logs}/phpunit_testresults.xml" styledir="xsl" todir="${dir.reports}/unittests" format="frames" />
+        <echo msg="Generating report for codecoverage..." />
+        <coverage-report outfile="${dir.logs}/coverage.xml">
+            <report todir="${dir.reports}/codecoverage" styledir="xsl"/>
+        </coverage-report>
+        <echo msg="Generating report for codingstandards..." />
+        <xslt style="xsl/phpcs-noframes.xsl" file="${dir.logs}/phpcs_testresults.xml" tofile="${dir.reports}/codingstandards/details.html" />
     </target>
 
     <target name="usage" description="Prints out a list of possible target.">
         <echo message="Possible targets to call:" />
         <echo message="  * build" />
-        <echo message="  * apidoc.build" />
-        <echo message="  * apidoc.stage" />
         <echo message="  * test" />
         <echo message="  * codesniff" />
+        <echo message="  * apidocs" />
     </target>
 
 </project>
