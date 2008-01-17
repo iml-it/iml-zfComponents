@@ -34,7 +34,7 @@ require_once 'Zend/Log/Formatter/Simple.php';
 /**
  * Mail based log writer
  *
- * This log writer implements the funcitonality to log to mails. This
+ * This log writer implements the functionality to log to mails. This
  * way developers and maintainers can be notified about severe errors in
  * a production application.
  *
