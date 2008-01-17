@@ -22,7 +22,7 @@
         <pathelement dir="${dir.base}/library/"/>
     </path>
 
-    <target name="build" depends="clean.all, prepare.continuous, test, codesniff, generate-reports" />
+    <target name="build" depends="clean.all, prepare.continuous, svnupdate, test, codesniff, generate-reports" />
 
     <target name="clean.all" description="Remove all generated files" depends="clean.apidocs, clean.reports">
         <echo msg="Cleaning output directory... " />
@@ -47,6 +47,15 @@
         <mkdir dir="${dir.logs}" />
         <mkdir dir="${dir.reports}" />
         <mkdir dir="${dir.apidocs}" />
+    </target>
+
+    <target name="svnupdate" description="runs svn update on project">
+        <svnupdate
+            svnpath="/usr/bin/svn"
+            username="phing"
+            password="phingpass"
+            nocache="true"
+            todir="${dir.base}"/>
     </target>
 
     <target name="test" depends="prepare.continuous" unless="project.test.disabled" description="Runs the unittests.">
