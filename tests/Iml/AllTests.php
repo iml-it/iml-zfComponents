@@ -27,8 +27,8 @@ if (!defined('PHPUnit_MAIN_METHOD')) {
     define('PHPUnit_MAIN_METHOD', 'Zend_AllTests::main');
 }
 
-require_once 'Iml/DebugTest.php';
-require_once 'Iml/Log/AllTests.php';
+require_once 'DebugTest.php';
+require_once 'Log/AllTests.php';
 
 /**
  * @category   Iml

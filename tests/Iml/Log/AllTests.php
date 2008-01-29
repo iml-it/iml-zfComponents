@@ -27,7 +27,7 @@ if (!defined('PHPUnit_MAIN_METHOD')) {
     define('PHPUnit_MAIN_METHOD', 'Iml_Log_AllTests::main');
 }
 
-require_once 'Iml/Log/Writer/MailTest.php';
+require_once 'Writer/MailTest.php';
 
 /**
  * @category   Iml

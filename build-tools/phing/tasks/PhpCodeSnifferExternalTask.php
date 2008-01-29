@@ -103,7 +103,9 @@ class PhpCodeSnifferExternalTask extends Task
 		$this->log("Running Php_CodeSniffer...");
 		$command = $this->programpath . " " . $arguments;
 		$return = 2;
+		$output = '';
 		exec($command, $output, $return);
+		unset($output);
         switch ($return) {
             case 0:
                 $this->log('... Great! No coding standards violations.');

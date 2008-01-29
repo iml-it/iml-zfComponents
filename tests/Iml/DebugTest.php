@@ -116,7 +116,7 @@ class Iml_DebugTest extends PHPUnit_Framework_TestCase
     {
         Iml_Debug::setSapi('cli');
         try {
-            $result = Iml_Debug::dumpLogEvents('a string', null, false);
+            Iml_Debug::dumpLogEvents('a string', null, false);
             $this->fail();
         } catch (Exception $e) {
             $this->assertType('Iml_Debug_Exception', $e);
