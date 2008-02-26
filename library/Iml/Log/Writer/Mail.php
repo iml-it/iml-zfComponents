@@ -56,6 +56,13 @@ class Iml_Log_Writer_Mail extends Zend_Log_Writer_Abstract
     protected $_mail;
 
     /**
+     * Holds the Zend_Log_Formatter object
+     *
+     * @var Zend_Log_Formatter_Abstract
+     */
+    protected $_formatter;
+
+    /**
      * Class Constructor
      *
      * @param  Zend_Mail  Mail object
