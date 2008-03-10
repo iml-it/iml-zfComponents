@@ -35,47 +35,151 @@ require_once 'Zend/Auth/Adapter/Interface.php';
 class Iml_Auth_Adapter_Shibboleth implements Zend_Auth_Adapter_Interface
 {
     /**
-     * Denotes the key in $_SERVER which holds the
-     * unique id of an authenticated user.
+     * $_identityField - key in $_SERVER
+     * Denotes the identity field.
      *
-     * @var Zend_Mail
+     * @var string
      */
-    protected $usernameField = 'HTTP_SHIB_SWISSEP_UNIQUEID';
+    protected $_identityField = 'HTTP_SHIB_SWISSEP_UNIQUEID';
+    
+    /**
+     * $_keyMap - Keymap hash for translating keys
+     * to variable names
+     * 
+     * @var array
+     */
+    protected $_keyMap = null;
+    
+    /**
+     * $_hasKeyMap - Set to true if a keymap is in place
+     *
+     * @var boolean
+     */
+    protected $_hasKeyMap = false;
+    
+    /**
+     * $_identity - Identity array
+     *
+     * @var array
+     */
+    protected $_identity = array();
 
     /**
-     * Sets username and password for authentication
+     * Class constructor
      *
+     * @param string $identityField key in $_SERVER to use for identity
+     * @param array $keyMap Key map of envvar names to appvar names
      * @return void
      */
-    public function __construct($username, $password)
+    public function __construct($identityField = null, $keyMap = null)
     {
-        // TODO: make this class attribute agnostic.
+        if (null !== $identityField) {
+            $this->setIdentityField($identityField);
+        }
+
+        if (is_array($keyMap)) {
+            $this->setKeyMap($keyMap);
+        }
     }
 
     /**
      * Performs an authentication attempt
      *
-     * @throws Zend_Auth_Adapter_Exception If authentication cannot be performed
+     * @throws Zend_Auth_Adapter_Exception If authentication cannot be
+     *         performed
      * @return Zend_Auth_Result
      */
     public function authenticate()
     {
-        $result = array(
-            'code' => Zend_Auth_Result::SUCCESS,
-            'identity' => $this->_setupIdentity(),
-            'messages' => array(),
-        );
-        return new Zend_Auth_Result($result['code'], $result['identity'], $result['messages']);
+        if (isset($_SERVER[$this->_identityField])) {
+            $this->_setupIdentity();
+            $result = array(
+                'code' => Zend_Auth_Result::SUCCESS,
+                'identity' => $this->_identity,
+                'messages' => array(),
+            );
+            return new Zend_Auth_Result(
+                            $result['code'],
+                            $result['identity'], 
+                            $result['messages']
+                            );
+        } else {
+            return new Zend_Auth_Result(
+                                Zend_Auth_Result::FAILURE_IDENTITY_NOT_FOUND
+                                );
+        }
     }
-    
+
+    /**
+     * setIdentityFiled() - set the key in $_SERVER to be used as identity
+     *
+     * @param string $identityField
+     */
+    public function setIdentityField($identityField)
+    {
+        $this->_identityField = $identityField;
+    }
+
+    /**
+     * setKeyMap() - Setup a key map
+     *
+     * @throws Zend_Auth_Adapter_Exception If $keyMap is not of type array 
+     * @param array $keyMap
+     * @return void
+     */
+    public function setKeyMap($keyMap)
+    {
+        if (is_array($keyMap)) {
+            $this->_keyMap = $keyMap;
+            $this->_hasMap = true;
+        } else {
+            throw new Zend_Auth_Adapter_Exception(
+                                'An array of key/value pairs has to be ' .
+                                'provided. "' . getType($keyMap) . '" given.'
+                                );
+        }
+    }
+
+    /**
+     * clearKeyMap() - Clear out a previously set keymap.
+     *
+     * @return void
+     */
+    public function clearKeyMap()
+    {
+        $this->_keyMap = null;
+        $this->_hasKeyMap = false;
+    }
+
+    /**
+     * hasMap() - Returns true if a keymap has been setup.
+     *
+     * @return boolean
+     */
+    public function hasKeyMap()
+    {
+        return $this->_hasKeyMap();
+    }
+
+    /**
+     * _setupIdentity() - Builds the identity from values in $_SERVER set
+     * by the shibboleth daemon; honors a key mapping if one is set. 
+     *
+     * @return void
+     */
     protected function _setupIdentity()
     {
-        $identity = array();
         foreach ($_SERVER as $key => $value) {
             if (substr($key, 0, 10) == 'HTTP_SHIB_') {
-                $identity[$key] = $value;
+                if ($this->_hasKeyMap()) {
+                    if (array_key_exists($key, $this->_keyMap)) {
+                        $key = $this->_keyMap[$key];
+                    }
+                    $this->_identity[$key] = $value;
+                } else {
+                    $this->_identity[$key] = $value;
+                }
             }
         }
-        return $identity;
     }
 }
