@@ -171,7 +171,7 @@ class Iml_Auth_Adapter_Shibboleth implements Zend_Auth_Adapter_Interface
     {
         foreach ($_SERVER as $key => $value) {
             if (substr($key, 0, 10) == 'HTTP_SHIB_') {
-                if ($this->_hasKeyMap()) {
+                if ($this->hasKeyMap()) {
                     if (array_key_exists($key, $this->_keyMap)) {
                         $key = $this->_keyMap[$key];
                     }
