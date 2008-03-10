@@ -241,4 +241,18 @@ class Iml_Auth_Adapter_ShibbolethTest extends PHPUnit_Framework_TestCase
                             $identity[$this->_identityField]
                             );
     }
+
+    /**
+     * Test if adapter only sets attributes in identity which are
+     * specified in the key map.
+     */
+    public function testIdentityContentWhenUsingKeyMap()
+    {
+        $auth = new Iml_Auth_Adapter_Shibboleth();
+        $auth->setIdentityField($this->_identityField);
+        $auth->setKeyMap($this->_keyMap);
+        $result = $auth->authenticate();
+        $identity = $result->getIdentity();
+        $this->assertEquals(count($this->_keyMap), count($identity));
+    }
 }
