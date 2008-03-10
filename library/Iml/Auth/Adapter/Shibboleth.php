@@ -158,7 +158,7 @@ class Iml_Auth_Adapter_Shibboleth implements Zend_Auth_Adapter_Interface
      */
     public function hasKeyMap()
     {
-        return $this->_hasKeyMap();
+        return $this->_hasKeyMap;
     }
 
     /**
