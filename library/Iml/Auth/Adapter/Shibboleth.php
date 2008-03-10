@@ -43,7 +43,7 @@ class Iml_Auth_Adapter_Shibboleth implements Zend_Auth_Adapter_Interface
      *
      * @var string
      */
-    protected $_identityField = 'HTTP_SHIB_SWISSEP_UNIQUEID';
+    protected $_identityField = null;
     
     /**
      * $_keyMap - Keymap hash for translating keys
@@ -94,23 +94,30 @@ class Iml_Auth_Adapter_Shibboleth implements Zend_Auth_Adapter_Interface
      */
     public function authenticate()
     {
+        if (null === $this->_identityField) {
+            throw new Zend_Auth_Exception('No identity field set. ' . 
+                                          'Use setIdentityField()'
+                                          );
+        }
         if (isset($_SERVER[$this->_identityField])) {
             $this->_setupIdentity();
             $result = array(
-                'code' => Zend_Auth_Result::SUCCESS,
+                'code'     => Zend_Auth_Result::SUCCESS,
                 'identity' => $this->_identity,
                 'messages' => array(),
             );
-            return new Zend_Auth_Result(
-                            $result['code'],
-                            $result['identity'], 
-                            $result['messages']
-                            );
         } else {
-            return new Zend_Auth_Result(
-                                Zend_Auth_Result::FAILURE_IDENTITY_NOT_FOUND
-                                );
+            $result = array(
+                'code'     => Zend_Auth_Result::FAILURE_IDENTITY_NOT_FOUND,
+                'identity' => $this->_identity,
+                'messages' => array('There was no active shibboleth session' .
+                                      ' to authenticate against.'),
+            );
         }
+        return new Zend_Auth_Result($result['code'], 
+                                    $result['identity'], 
+                                    $result['messages']
+                   );
     }
 
     /**
@@ -134,9 +141,9 @@ class Iml_Auth_Adapter_Shibboleth implements Zend_Auth_Adapter_Interface
     {
         if (is_array($keyMap)) {
             $this->_keyMap = $keyMap;
-            $this->_hasMap = true;
+            $this->_hasKeyMap = true;
         } else {
-            throw new Zend_Auth_Adapter_Exception(
+            throw new Zend_Auth_Exception(
                                 'An array of key/value pairs has to be ' .
                                 'provided. "' . getType($keyMap) . '" given.'
                                 );
