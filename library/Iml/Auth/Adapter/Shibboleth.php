@@ -184,8 +184,8 @@ class Iml_Auth_Adapter_Shibboleth implements Zend_Auth_Adapter_Interface
                 if ($this->hasKeyMap()) {
                     if (array_key_exists($key, $this->_keyMap)) {
                         $key = $this->_keyMap[$key];
+                        $this->_identity[$key] = $value;
                     }
-                    $this->_identity[$key] = $value;
                 } else {
                     $this->_identity[$key] = $value;
                 }

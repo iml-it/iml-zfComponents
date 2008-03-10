@@ -77,6 +77,7 @@ class Iml_Auth_Adapter_ShibbolethTest extends PHPUnit_Framework_TestCase
         $_SERVER['HTTP_SHIB_INETORGPERSON_MAIL'] = 'demouser@test.unibe.ch';
         $_SERVER['HTTP_SHIB_INETORGPERSON_GIVENNAME'] = 'demo';
         $_SERVER['HTTP_SHIB_PERSON_SURNAME']     = 'User';
+        $_SERVER['HTTP_SHIB_EP_AFFILIATION']     = 'staff';
         
         // the identity field name to use for the tests
         $this->_identityField = 'HTTP_SHIB_SWISSEP_UNIQUEID';
