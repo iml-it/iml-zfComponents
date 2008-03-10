@@ -11,7 +11,7 @@
  * Commons, 171 Second Street, Suite 300, San Francisco, California, 94105, USA.
  *
  * @category   Iml
- * @package    Iml
+ * @package    Iml_Auth
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2007 Institute for Medical Education, University of Bern (http://www.iml.unibe.ch)
  * @license    http://creativecommons.org/licenses/by-sa/2.5/ch/     CC-By-Sa
@@ -21,24 +21,22 @@
 /**
  * Test helper
  */
-require_once dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'TestHelper.php';
+require_once dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR . 'TestHelper.php';
 
 if (!defined('PHPUnit_MAIN_METHOD')) {
-    define('PHPUnit_MAIN_METHOD', 'Zend_AllTests::main');
+    define('PHPUnit_MAIN_METHOD', 'Iml_Log_AllTests::main');
 }
 
-require_once 'DebugTest.php';
-require_once 'Auth/AllTests.php';
-require_once 'Log/AllTests.php';
+require_once 'Adapter/ShibbolethTest.php';
 
 /**
  * @category   Iml
- * @package    Iml
+ * @package    Iml_Auth
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2007 Institute for Medical Education, University of Bern (http://www.iml.unibe.ch)
  * @license    http://creativecommons.org/licenses/by-sa/2.5/ch/     CC-By-Sa
  */
-class Iml_AllTests
+class Iml_Auth_AllTests
 {
     public static function main()
     {
@@ -47,16 +45,14 @@ class Iml_AllTests
 
     public static function suite()
     {
-        $suite = new PHPUnit_Framework_TestSuite('IML Zend Framework Components - Iml');
+        $suite = new PHPUnit_Framework_TestSuite('Iml Zend Framework Components - Iml_Auth');
 
-        $suite->addTestSuite('Iml_DebugTest');
-        $suite->addTest(Iml_Auth_AllTests::suite());
-        $suite->addTest(Iml_Log_AllTests::suite());
+        $suite->addTestSuite('Iml_Auth_Adapter_ShibbolethTest');
 
         return $suite;
     }
 }
 
-if (PHPUnit_MAIN_METHOD == 'Iml_AllTests::main') {
+if (PHPUnit_MAIN_METHOD == 'Iml_Log_AllTests::main') {
     Iml_AllTests::main();
 }
