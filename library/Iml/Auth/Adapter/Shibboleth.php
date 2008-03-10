@@ -162,7 +162,7 @@ class Iml_Auth_Adapter_Shibboleth implements Zend_Auth_Adapter_Interface
     }
 
     /**
-     * hasMap() - Returns true if a keymap has been setup.
+     * hasKeyMap() - Returns true if a keymap has been setup.
      *
      * @return boolean
      */
@@ -180,7 +180,7 @@ class Iml_Auth_Adapter_Shibboleth implements Zend_Auth_Adapter_Interface
     protected function _setupIdentity()
     {
         foreach ($_SERVER as $key => $value) {
-            if (substr($key, 0, 10) == 'HTTP_SHIB_') {
+            if (false !== strpos($key, 'HTTP_SHIB')) {
                 if ($this->hasKeyMap()) {
                     if (array_key_exists($key, $this->_keyMap)) {
                         $key = $this->_keyMap[$key];
