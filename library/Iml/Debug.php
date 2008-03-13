@@ -21,11 +21,6 @@
  */
 
 /**
- * Iml_Debug_Exception
- */
-require_once 'Iml/Debug/Exception.php';
-
-/**
  * Zend_Debug
  */
 require_once 'Zend/Debug.php';
@@ -34,6 +29,11 @@ require_once 'Zend/Debug.php';
  * Zend_Log_Formatter_Simple
  */
 require_once 'Zend/Log/Formatter/Simple.php';
+
+/**
+ * Iml_Debug_Exception
+ */
+require_once 'Iml/Debug/Exception.php';
 
 /**
  * Mulitpurpose Debugging Class

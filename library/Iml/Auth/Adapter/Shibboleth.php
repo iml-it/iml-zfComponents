@@ -13,7 +13,7 @@
  *
  * @category   Iml
  * @package    Iml_Auth
- * @subpackage Adapters
+ * @subpackage Adapter
  * @copyright  Copyright (c) 2007 Institute for Medical Education, University of
  *             Bern (http://www.iml.unibe.ch)
  * @author     Michael Rolli <michael.rolli@iml.unibe.ch>
@@ -27,9 +27,14 @@
 require_once 'Zend/Auth/Adapter/Interface.php';
 
 /**
+ * Iml_Auth_Adapter_Exception
+ */
+require_once 'Iml/Auth/Adapter/Exception.php';
+
+/**
  * @category   Iml
  * @package    Iml_Auth
- * @subpackage Adapters
+ * @subpackage Adapter
  * @copyright  Copyright (c) 2007 Institute for Medical Education, 
  *             University of Bern (http://www.iml.unibe.ch)
  * @author     Michael Rolli <michael.rolli@iml.unibe.ch>
@@ -88,16 +93,16 @@ class Iml_Auth_Adapter_Shibboleth implements Zend_Auth_Adapter_Interface
     /**
      * Performs an authentication attempt
      *
-     * @throws Zend_Auth_Adapter_Exception If authentication cannot be
+     * @throws Iml_Auth_Adapter_Exception If authentication cannot be
      *         performed
      * @return Zend_Auth_Result
      */
     public function authenticate()
     {
         if (null === $this->_identityField) {
-            throw new Zend_Auth_Exception('No identity field set. ' . 
-                                          'Use setIdentityField()'
-                                          );
+            throw new Iml_Auth_Adapter_Exception('No identity field set. ' . 
+                                                 'Use setIdentityField()'
+                                                 );
         }
         if (isset($_SERVER[$this->_identityField])) {
             $this->_setupIdentity();
@@ -133,7 +138,7 @@ class Iml_Auth_Adapter_Shibboleth implements Zend_Auth_Adapter_Interface
     /**
      * setKeyMap() - Setup a key map
      *
-     * @throws Zend_Auth_Adapter_Exception If $keyMap is not of type array 
+     * @throws Iml_Auth_Adapter_Exception If $keyMap is not of type array 
      * @param array $keyMap
      * @return void
      */
@@ -143,10 +148,10 @@ class Iml_Auth_Adapter_Shibboleth implements Zend_Auth_Adapter_Interface
             $this->_keyMap = $keyMap;
             $this->_hasKeyMap = true;
         } else {
-            throw new Zend_Auth_Exception(
-                                'An array of key/value pairs has to be ' .
-                                'provided. "' . getType($keyMap) . '" given.'
-                                );
+            throw new Iml_Auth_Adapter_Exception(
+                                  'An array of key/value pairs has to be ' .
+                                  'provided. "' . getType($keyMap) . '" given.'
+                                  );
         }
     }
 

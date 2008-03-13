@@ -32,6 +32,11 @@ require_once 'Zend/Log/Writer/Abstract.php';
 require_once 'Zend/Log/Formatter/Simple.php';
 
 /**
+ * Iml_Log_Exception
+ */
+require_once 'Iml/Log/Exception.php';
+
+/**
  * Mail based log writer
  *
  * This log writer implements the functionality to log to mails. This
@@ -67,6 +72,7 @@ class Iml_Log_Writer_Mail extends Zend_Log_Writer_Abstract
      *
      * @param  Zend_Mail  Mail object
      * @return void
+     * @throws Iml_Log_Exception
      */
     public function __construct($mail)
     {
@@ -74,7 +80,7 @@ class Iml_Log_Writer_Mail extends Zend_Log_Writer_Abstract
             $this->_mail = $mail;
             $this->_formatter = new Zend_Log_Formatter_Simple();
         } else {
-            throw new Zend_Log_Exception('First parameter must be an '
+            throw new Iml_Log_Exception('First parameter must be an '
                                         .'instance of Zend_Mail, ' 
                                         . gettype($mail) . ' given');
         }
@@ -99,7 +105,7 @@ class Iml_Log_Writer_Mail extends Zend_Log_Writer_Abstract
     protected function _write($event)
     {
         if ($this->_mail == null) {
-            throw new Zend_Log_Exception('No mail object available to log to');
+            throw new Iml_Log_Exception('No mail object available to log to');
         }
         $line = $this->_formatter->format($event);
 

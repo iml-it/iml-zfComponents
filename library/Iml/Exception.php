@@ -1,7 +1,7 @@
 <?php
 
 /**
- * IML Zend Framework Components
+ * IML ZendFramework Components
  *
  * LICENSE
  *
@@ -12,33 +12,32 @@
  * 94105, USA.
  *
  * @category   Iml
- * @package    Iml_Debug
- * @copyright  Copyright (c) 2007 Institute for Medical Education, University of
- *             Bern (http://www.iml.unibe.ch)
+ * @package    Iml
+ * @copyright  Copyright (c) 2007 Institute for Medical Education, 
+ *             University of Bern (http://www.iml.unibe.ch)
  * @author     Michael Rolli <michael.rolli@iml.unibe.ch>
  * @license    http://creativecommons.org/licenses/by-sa/2.5/ch/     CC-By-Sa
  * @version    $Id$
  */
 
 /**
- * Iml_Exception
+ * Zend_Exception
  */
-require_once 'Iml/Exception.php';
-
+require_once 'Zend/Exception.php';
 
 /**
- * Exception class for the Iml_Debug package
- *
- * Classes from the Iml_Debug package should throw this
- * exception type.
- *
+ * Iml Exception
+ * 
+ * This is the base class of all exceptions thrown by a class from
+ * the iml-zfComponents library.
+ * 
  * @category   Iml
- * @package    Iml_Debug
- * @copyright  Copyright (c) 2007 Institute for Medical Education, University of
- *             Bern (http://www.iml.unibe.ch)
+ * @package    Iml
+ * @copyright  Copyright (c) 2007 Institute for Medical Education, 
+ *             University of Bern (http://www.iml.unibe.ch)
  * @author     Michael Rolli <michael.rolli@iml.unibe.ch>
  * @license    http://creativecommons.org/licenses/by-sa/2.5/ch/     CC-By-Sa
  */
-class Iml_Debug_Exception extends Iml_Exception
+class Iml_Exception extends Zend_Exception
 {
 }
