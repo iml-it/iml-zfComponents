@@ -31,7 +31,6 @@ require_once 'Zend/Http/Client.php';
  */
 require_once 'Iml/Shibboleth/Gmt/Exception.php';
 
-
 /**
  * Shibboleth GMT Query Class
  * 
@@ -74,8 +73,8 @@ class Iml_Shibboleth_Gmt
      * Class constructor. Builds a Zend_Http_Client object and sets
      * the shared key for encryption.
      *
-     * @param unknown_type $remoteUri
-     * @param unknown_type $sharedKey
+     * @param string $remoteUri
+     * @param string $sharedKey
      */
     public function __construct($remoteUri, $sharedKey = '')
     {
@@ -200,9 +199,9 @@ class Iml_Shibboleth_Gmt
 
         $result = $this->_parseXml($response->getBody());
         $userData = array();
-        $userData['givenName'] = $result->user->givenName;
-        $userData['surname']   = $result->user->surname;
-        $userData['mail']      = $result->user->mail;
+        $userData['givenName'] = (string) $result->user->givenName;
+        $userData['surname']   = (string) $result->user->surname;
+        $userData['mail']      = (string) $result->user->mail;
         return $userData;
         
     }
@@ -313,7 +312,7 @@ class Iml_Shibboleth_Gmt
     }
 
     /**
-     * Build the request and executes it. Throws an exception if http return 
+     * Builds the request and executes it. Throws an exception if http return 
      * code isn't 200. 
      *
      * @param array $parameters
@@ -321,13 +320,25 @@ class Iml_Shibboleth_Gmt
      */
     protected function _request($parameters)
     {
+        // reset parameters from previous request
+        $this->_httpClient->resetParameters();
+        
+        // GMT expects dashes subtitutes by underscores in group names
         if (array_key_exists('group', $parameters)) {
             $parameters['group'] = str_replace('-', '_', $parameters['group']);
         }
-        $this->_httpClient->resetParameters();
+        
+        // Encrypt parameter values if sharedKey is sest
+        if ($this->_encrypt) {
+            $parameters = $this->_encryptParameters($parameters);
+        }
+        
+        // GMT expects parameter values base64 encoded
         foreach ($parameters as $key => $value) {
         	$this->_httpClient->setParameterPost($key, base64_encode($value));
         }
+        
+        // send the request
         $response =  $this->_httpClient->request(Zend_Http_Client::POST);
         if ($response->getStatus() != 200) {
             throw new Iml_Shibboleth_Gmt_Exception(sprintf('GMT request failed (%s: %s)', 
@@ -335,6 +346,81 @@ class Iml_Shibboleth_Gmt
                                                            $response->getMessage()));
         }
         return $response;        
+    }
+
+    /**
+     * Encrypts given parameters using the shared secret provided.
+     *
+     * @param array $parameters request parameters
+     * @return array ecnrypted request parameters
+     */
+    protected function _encryptParameters($parameters)
+    {
+        $sessionKey = md5(uniqid(rand(), 1));
+        $sessionKey.= md5(uniqid(rand(), 1));
+
+        foreach ($parameters as $key => $value) {
+            $parameters[$key] = $this->_cryptRc4($sessionKey, $value);
+        }
+        $parameters['encryption'] = $this->_cryptRc4($this->_sharedKey, $sessionKey);
+        return $parameters;
+    }
+
+    /**
+     * Decrypts an encrypted response.
+     *
+     * @param SimpleXMLElement $response encrypted respnse
+     * @return SimpleXMLElement representing the unencrypted result
+     */
+    protected function _decryptResponse($response)
+    {
+        $encryptedSessionKey = strval($response->encrypted->sessionkey);
+        $sessionKey = $this->_cryptRc4($this->_sharedKey, base64_decode($encryptedSessionKey));
+        $encryptedResult = strval($response->encrypted->result);
+        $result = $this->_cryptRc4($sessionKey, base64_decode($encryptedResult));
+        $response = simplexml_load_string('<response><result>' . $result . '</result></response>');
+        return $response;
+    }
+
+    /**
+     * Encrypts or decrypts $value using shared secret key $sharedKey with
+     * RC4 algorithm.
+     *
+     * @param string $secretKey private shared key 
+     * @param string $value to be encrypted/decrypted
+     */
+    protected function _cryptRc4($secretKey, $text)
+    {
+        $key = array('');
+        $box = array('');
+        $cipher = '';
+        
+        $secretKeyLength = strlen($secretKey);
+        $textLength = strlen($text);
+        
+        for ($i = 0; $i<256; $i++) {
+            $key[$i] = ord($secretKey[$i % $secretKeyLength]);
+            $box[$i] = $i;
+        }
+        
+        for ($j = $i = 0; $i<256; $i++) {
+            $j = ($j + $box[$i] + $key[$i]) % 256;
+            $tmp = $box[$i];
+            $box[$i] = $box[$j];
+            $box[$j] = $tmp;
+        }
+        
+        for ($a = $j = $i = 0; $i < $textLength; $i++) {
+            $a = ($a + 1) % 256;
+            $j = ($j + $box[$a]) % 256;
+            $tmp = $box[$a];
+            $box[$a] = $box[$j];
+            $box[$j] = $tmp;
+            $k = $box[($box[$a] + $box[$j]) % 256];
+            $cipher.= chr(ord($text[$i]) ^ $k );
+        }
+        
+        return $cipher;
     }
 
     /**
@@ -346,11 +432,22 @@ class Iml_Shibboleth_Gmt
     protected function _parseXml($xml)
     {
         $response = simplexml_load_string($xml);
+
+        // test to wellformdness of xml
         if (!$response) {
             throw new Iml_Shibboleth_Gmt_Exception('GMT error: Respose not wellformed xml data');
-        } elseif ($response->error) {
+        }
+
+        // Check if response is encrypted. If yes decrypt it.
+        if ($this->_encrypt && $response->encrypted) {
+            $response = $this->_decryptResponse($response);
+        }
+
+        // Check if respnse represents a query error
+        if ($response->error) {
             throw new Iml_Shibboleth_Gmt_Exception(sprintf('GMT error: %s', $response->error));
         }
+
         return $response->result;
     }
 }
