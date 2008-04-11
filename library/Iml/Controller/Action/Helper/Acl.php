@@ -104,6 +104,13 @@ class Iml_Controller_Action_Helper_Acl extends Zend_Controller_Action_Helper_Abs
      * @var string
      */
     protected $_defaultRole = 'guest';
+    
+    /**
+     * Throw an exception if access is denied?
+     * 
+     * @var boolean
+     */
+    protected $_throwIfDenied = true;
 
     /**
      * Array of module, controller, action to redirect to
@@ -112,8 +119,8 @@ class Iml_Controller_Action_Helper_Acl extends Zend_Controller_Action_Helper_Abs
      * @var array
      */
     protected $_noauth = array('module'     => 'default',
-                               'controller' => 'error',
-                               'action'     => 'error');
+                               'controller' => 'index',
+                               'action'     => 'index');
 
     /**
      * Array of module, controller, action to redirect to
@@ -122,8 +129,8 @@ class Iml_Controller_Action_Helper_Acl extends Zend_Controller_Action_Helper_Abs
      * @var array
      */
     protected $_noacl  = array('module'     => 'default',
-                               'controller' => 'error',
-                               'action'     => 'error');
+                               'controller' => 'index',
+                               'action'     => 'index');
     
     public function __construct(Zend_View_Interface $view = null, array $options = array())
     {
@@ -141,6 +148,10 @@ class Iml_Controller_Action_Helper_Acl extends Zend_Controller_Action_Helper_Abs
         }
         if (isset($options['noacl']) && is_array($options['noacl'])) {
             $this->_noauth = $options['noacl'];
+        }
+        
+        if (isset($options['throwIfDenied'])) {
+            $this->_throwIfDenied = $options['throwIfDenied'];
         }
         
     }
@@ -211,20 +222,24 @@ class Iml_Controller_Action_Helper_Acl extends Zend_Controller_Action_Helper_Abs
             $role = $this->_defaultRole;
         }
         if (!$this->_acl->isAllowed($role, $this->_controllerName, $this->_action->getRequest()->getActionName())) {
-            if ($this->_auth->hasIdentity()) {
-                $module     = $this->_noacl['module'];
-                $controller = $this->_noacl['controller'];
-                $action     = $this->_noacl['action'];
+            if ($this->_throwIfDenied) {
+                throw new Zend_Acl_Exception('Access denied to requested action');
             } else {
-                $module     = $this->_noauth['module'];
-                $controller = $this->_noauth['controller'];
-                $action     = $this->_noauth['action'];
-            }
+                if ($this->_auth->hasIdentity()) {
+                    $module     = $this->_noacl['module'];
+                    $controller = $this->_noacl['controller'];
+                    $action     = $this->_noacl['action'];
+                } else {
+                    $module     = $this->_noauth['module'];
+                    $controller = $this->_noauth['controller'];
+                    $action     = $this->_noauth['action'];
+                }
             $request = $this->_action->getRequest();
             $request->setModuleName($module)
                     ->setControllerName($controller)
                     ->setActionName($action)
                     ->setDispatched(false);
+            }
         }
     }
 }
