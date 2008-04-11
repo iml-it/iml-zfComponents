@@ -116,21 +116,17 @@ class Iml_Controller_Action_Helper_Acl extends Zend_Controller_Action_Helper_Abs
      * Array of module, controller, action to redirect to
      * when acl check denies and the user was not authed.
      *
-     * @var array
+     * @var array|null
      */
-    protected $_noauth = array('module'     => 'default',
-                               'controller' => 'index',
-                               'action'     => 'index');
+    protected $_noauth = null;
 
     /**
      * Array of module, controller, action to redirect to
      * when acl check denies and the user was authed.
      *
-     * @var array
+     * @var array|null
      */
-    protected $_noacl  = array('module'     => 'default',
-                               'controller' => 'index',
-                               'action'     => 'index');
+    protected $_noacl  = null;
     
     public function __construct(Zend_View_Interface $view = null, array $options = array())
     {
@@ -225,14 +221,16 @@ class Iml_Controller_Action_Helper_Acl extends Zend_Controller_Action_Helper_Abs
             if ($this->_throwIfDenied) {
                 throw new Zend_Acl_Exception('Access denied to requested action');
             } else {
-                if ($this->_auth->hasIdentity()) {
+                if ($this->_auth->hasIdentity() && null != $this->_noacl) {
                     $module     = $this->_noacl['module'];
                     $controller = $this->_noacl['controller'];
                     $action     = $this->_noacl['action'];
-                } else {
+                } elseif (null != $this->_noauth) {
                     $module     = $this->_noauth['module'];
                     $controller = $this->_noauth['controller'];
                     $action     = $this->_noauth['action'];
+                } else {
+                    throw new Zend_Controller_Action_Exception('Exceptions disabled but no redirect destinations set.');
                 }
             $request = $this->_action->getRequest();
             $request->setModuleName($module)
