@@ -47,6 +47,15 @@ require_once 'Iml/Shibboleth/Gmt/Exception.php';
  */
 class Iml_Shibboleth_Gmt
 {
+    const UNKNOWN           = '0';
+    const MEMBER            = '1';
+    const PRIV_MEMBER       = '1.5';
+    const GROUP_ADMIN       = '2';
+    const PRIV_GROUP_ADMIN  = '2.1';
+    const GLOBAL_ADMIN      = '3';
+    const PRIV_GLOBAL_ADMIN = '3.1';
+
+
     /**
      * Instance of Zend_Http_Client to use for queries
      * to the remote GMT.
@@ -171,7 +180,6 @@ class Iml_Shibboleth_Gmt
      * @param string $user uniqueid
      * @param integer $group group id
      * @return string role id
-     * @throws Iml_Shibboleth_Gmt_Excepton if error encountered
      */
     public function getUserRole($user, $group = '')
     {
@@ -181,8 +189,13 @@ class Iml_Shibboleth_Gmt
         }
         $response = $this->_request($parameters);
 
-        $result = $this->_parseXml($response->getBody());
-        return (string) $result->role->id;
+        try {
+            $result = $this->_parseXml($response->getBody());
+            $roleId = $result->role->id;
+        } catch (Iml_Shibboleth_Gmt_Exception $e) {
+            $roleId = self::UNKNOWN;
+        }
+        return (string) $roleId;
     }
 
     /**
