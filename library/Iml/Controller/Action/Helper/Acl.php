@@ -127,10 +127,26 @@ class Iml_Controller_Action_Helper_Acl extends Zend_Controller_Action_Helper_Abs
      * @var array|null
      */
     protected $_noacl  = null;
-    
+
+    /**
+     * Class constructor. Setup the helper which is customizable by an 
+     * options array.
+     * 
+     * Possible keys for the options array:
+     * - acl : acl object to query (mandatory)
+     * - throwifdenied : should helper throw an exception if acl check denies (optional)
+     * - noauth : array (module, controller, action) to redirect to if access denied and
+     *            not logged in user (i.e. a login form)
+     * - noacl  : array (module, controller, action) to redirect to if access denied and
+     *            logged in user (i.e an error action)
+     *
+     * @param Zend_View_Interface $view
+     * @param array $options
+     */
     public function __construct(Zend_View_Interface $view = null, array $options = array())
     {
         $this->_auth = Zend_Auth::getInstance();
+
         if (!isset($options['acl'])) {
             throw new Zend_Controller_Action_Exception('No Acl object provided.');
         } elseif (!$options['acl'] instanceof Zend_Acl) {
@@ -138,22 +154,26 @@ class Iml_Controller_Action_Helper_Acl extends Zend_Controller_Action_Helper_Abs
         } else {
             $this->_acl  = $options['acl'];
         }
-        
+
+        if (isset($options['throwIfDenied'])) {
+            $this->_throwIfDenied = $options['throwIfDenied'];
+        }
+
         if (isset($options['noauth']) && is_array($options['noauth'])) {
             $this->_noauth = $options['noauth'];
         }
+
         if (isset($options['noacl']) && is_array($options['noacl'])) {
             $this->_noauth = $options['noacl'];
         }
         
-        if (isset($options['throwIfDenied'])) {
-            $this->_throwIfDenied = $options['throwIfDenied'];
-        }
+
         
     }
     
     /**
      * Hook into action controller initialization
+     * 
      * @return void
      */
     public function init()
@@ -176,7 +196,7 @@ class Iml_Controller_Action_Helper_Acl extends Zend_Controller_Action_Helper_Abs
      * @param  Zend_Acl_Role_Interface|string|array     $roles 
      * @param  string|array                             $actions 
      * @uses   Zend_Acl::setRule() 
-     * @return Places_Controller_Action_Helper_Acl Provides a fluent interface 
+     * @return Iml_Controller_Action_Helper_Acl Provides a fluent interface 
      */ 
     public function allow($roles = null, $actions = null) 
     { 
@@ -194,7 +214,7 @@ class Iml_Controller_Action_Helper_Acl extends Zend_Controller_Action_Helper_Abs
      * @param  Zend_Acl_Role_Interface|string|array     $roles 
      * @param  string|array                             $actions 
      * @uses   Zend_Acl::setRule() 
-     * @return Places_Controller_Action_Helper_Acl Provides a fluent interface 
+     * @return Iml_Controller_Action_Helper_Acl Provides a fluent interface 
      */ 
     public function deny($roles = null, $actions = null) 
     { 
@@ -203,6 +223,15 @@ class Iml_Controller_Action_Helper_Acl extends Zend_Controller_Action_Helper_Abs
         return $this; 
     }
 
+    /**
+     * Hook into the predispatch phase. Based on the role of a given identity
+     * check if user has acces to the controller/action requested. If not
+     * take appropriate steps (throw, redirect).
+     * 
+     * @return void
+     * @throws Zend_Controller_Action_Exception|Zend_Acl_Exception
+     *
+     */
     public function preDispatch()
     {
         if ($this->_auth->hasIdentity()) {
@@ -232,10 +261,11 @@ class Iml_Controller_Action_Helper_Acl extends Zend_Controller_Action_Helper_Abs
                 } else {
                     throw new Zend_Controller_Action_Exception('Exceptions disabled but no redirect destinations set.');
                 }
-            $request = $this->_action->getRequest();
+            $request = $oldRequest = $this->_action->getRequest();
             $request->setModuleName($module)
                     ->setControllerName($controller)
                     ->setActionName($action)
+                    ->setParam('oldRequest', $oldRequest)
                     ->setDispatched(false);
             }
         }
