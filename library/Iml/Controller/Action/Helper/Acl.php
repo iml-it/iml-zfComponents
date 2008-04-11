@@ -261,11 +261,10 @@ class Iml_Controller_Action_Helper_Acl extends Zend_Controller_Action_Helper_Abs
                 } else {
                     throw new Zend_Controller_Action_Exception('Exceptions disabled but no redirect destinations set.');
                 }
-            $request = $oldRequest = $this->_action->getRequest();
+            $request = $this->_action->getRequest();
             $request->setModuleName($module)
                     ->setControllerName($controller)
                     ->setActionName($action)
-                    ->setParam('oldRequest', $oldRequest)
                     ->setDispatched(false);
             }
         }
