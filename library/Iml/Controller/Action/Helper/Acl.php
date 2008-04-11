@@ -164,7 +164,7 @@ class Iml_Controller_Action_Helper_Acl extends Zend_Controller_Action_Helper_Abs
         }
 
         if (isset($options['noacl']) && is_array($options['noacl'])) {
-            $this->_noauth = $options['noacl'];
+            $this->_noacl = $options['noacl'];
         }
         
 
