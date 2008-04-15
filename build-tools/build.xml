@@ -89,7 +89,7 @@
     </target>
 
     <target name="codesniff" depends="prepare.continuous" unless="project.codesniff.disabled" description="Does the code sniffing on project.">
-        <phpcodesniffer report="checkstyle" standard="Zend" todir="${dir.logs}" outfile="phpcs_testresults.xml" showwarning="0">
+        <phpcodesniffer report="checkstyle" standard="Zend" todir="${dir.logs}" outfile="phpcs_testresults.xml" showwarnings="false">
             <fileset dir="${dir.base}">
                 <include name="library/Iml/**/*.php" />
                 <include name="tests/**/*Test.php" />
