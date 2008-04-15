@@ -47,14 +47,17 @@ require_once 'Iml/Shibboleth/Gmt/Exception.php';
  */
 class Iml_Shibboleth_Gmt
 {
-    const UNKNOWN           = '0';
-    const MEMBER            = '1';
-    const PRIV_MEMBER       = '1.5';
-    const GROUP_ADMIN       = '2';
-    const PRIV_GROUP_ADMIN  = '2.1';
-    const GLOBAL_ADMIN      = '3';
-    const PRIV_GLOBAL_ADMIN = '3.1';
-
+    /**
+     * Default roles in standard GMT. Mapping of role ids
+     * used in GMT to human readable labels.
+     */
+    const UNKNOWN                           = '0';
+    const MEMBER                            = '1';
+    const PRIVILEGED_MEMBER                 = '1.5';
+    const GROUP_ADMINSTRATOR                = '2';
+    const PRIVIVILEGED_GROUP_ADMINISTRATOR  = '2.1';
+    const GLOBAL_ADMINISTRATOR              = '3';
+    const PRIV_GLOBAL_ADMINISTRATOR         = '3.1';
 
     /**
      * Instance of Zend_Http_Client to use for queries
@@ -89,19 +92,17 @@ class Iml_Shibboleth_Gmt
     {
         $httpClient = new Zend_Http_Client();
         $httpClient->setUri($remoteUri);
-        $httpClient->setConfig(
-            array('maxredirects' => 0, 
-                  'timeout' => 5, 
-                  'keepalive' => true,
-            )
-        );
+        $httpClient->setConfig(array('maxredirects' => 0, 
+                                     'timeout' => 5, 
+                                     'keepalive' => true,
+                                    ));
         $this->_httpClient = $httpClient;   
         if (!empty($sharedKey)) {
             $this->_sharedKey = $sharedKey;
             $this->_encrypt = true;
         }
     }
-    
+
     /**
      * Checks if user is in a particular group.
      *
@@ -294,7 +295,7 @@ class Iml_Shibboleth_Gmt
         $result = $this->_parseXml($response->getBody());
         $users = array();
         foreach ($result->users->user as $user) {
-        	$users[strval($user->id)] = strval($user->role);
+            $users[strval($user->id)] = strval($user->role);
         }
         return $users;
         
@@ -348,7 +349,7 @@ class Iml_Shibboleth_Gmt
         
         // GMT expects parameter values base64 encoded
         foreach ($parameters as $key => $value) {
-        	$this->_httpClient->setParameterPost($key, base64_encode($value));
+            $this->_httpClient->setParameterPost($key, base64_encode($value));
         }
         
         // send the request
@@ -430,7 +431,7 @@ class Iml_Shibboleth_Gmt
             $box[$a] = $box[$j];
             $box[$j] = $tmp;
             $k = $box[($box[$a] + $box[$j]) % 256];
-            $cipher.= chr(ord($text[$i]) ^ $k );
+            $cipher.= chr(ord($text[$i]) ^ $k);
         }
         
         return $cipher;
