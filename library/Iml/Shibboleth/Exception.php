@@ -39,5 +39,5 @@ require_once 'Iml/Exception.php';
  * @license    http://creativecommons.org/licenses/by-sa/2.5/ch/     CC-By-Sa
  */
 class Iml_Shibboleth_Exception extends Iml_Exception
-{  
+{
 }

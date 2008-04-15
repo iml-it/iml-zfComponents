@@ -114,8 +114,7 @@ class Iml_Auth_Adapter_ShibbolethTest extends PHPUnit_Framework_TestCase
                                                 );
         $this->assertAttributeContains($this->_identityField, 
                                        '_identityField',
-                                       $auth
-                                       );
+                                       $auth);
         $this->assertAttributeContains('email', '_keyMap', $auth);
     }
 
@@ -148,8 +147,7 @@ class Iml_Auth_Adapter_ShibbolethTest extends PHPUnit_Framework_TestCase
         $result = $auth->authenticate();
         $this->assertFalse($result->isValid());
         $this->assertEquals(Zend_Auth_Result::FAILURE_IDENTITY_NOT_FOUND,
-                            $result->getCode()
-                            );
+                            $result->getCode());
         $messages = $result->getMessages();
         $this->assertContains('shibboleth session', $messages[0]);
     }
@@ -162,12 +160,10 @@ class Iml_Auth_Adapter_ShibbolethTest extends PHPUnit_Framework_TestCase
         $auth = new Iml_Auth_Adapter_Shibboleth();
         $auth->setKeyMap($this->_keyMap);
         $this->assertTrue($auth->hasKeyMap(), 
-                          'Adapter should have a key map.'
-                          );
+                          'Adapter should have a key map.');
         $auth->clearKeyMap();
         $this->assertFalse($auth->hasKeyMap(), 
-                           'Adapter should not have a key map.'
-                           );
+                           'Adapter should not have a key map.');
     }
     
     /**
@@ -216,11 +212,9 @@ class Iml_Auth_Adapter_ShibbolethTest extends PHPUnit_Framework_TestCase
         $identity = $result->getIdentity();
         $this->assertType('array', $identity);
         $this->assertArrayHasKey($this->_keyMap[$this->_identityField], 
-                                 $identity
-                                 );
+                                 $identity);
         $this->assertEquals('demouser@unibe.ch', 
-                            $identity[$this->_keyMap[$this->_identityField]]
-                            );
+                            $identity[$this->_keyMap[$this->_identityField]]);
     }
     
     /**
@@ -236,11 +230,9 @@ class Iml_Auth_Adapter_ShibbolethTest extends PHPUnit_Framework_TestCase
         $identity = $auth->getIdentity();
         $this->assertType('array', $identity);
         $this->assertArrayHasKey($this->_identityField, 
-                                 $identity
-                                 );
+                                 $identity);
         $this->assertEquals('demouser@unibe.ch', 
-                            $identity[$this->_identityField]
-                            );
+                            $identity[$this->_identityField]);
     }
 
     /**
