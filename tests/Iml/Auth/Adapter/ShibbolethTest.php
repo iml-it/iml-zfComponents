@@ -225,7 +225,7 @@ class Iml_Auth_Adapter_ShibbolethTest extends PHPUnit_Framework_TestCase
         $authAdapter = new Iml_Auth_Adapter_Shibboleth();
         $authAdapter->setIdentityField($this->_identityField);
         $auth = Zend_Auth::getInstance();
-        $auth->authenticate($auth_adapter);
+        $auth->authenticate($authAdapter);
         $this->assertTrue($auth->hasIdentity());
         $identity = $auth->getIdentity();
         $this->assertType('array', $identity);
