@@ -24,8 +24,8 @@
 /**
  * Test helper
  */
-require_once dirname(dirname(dirname(dirname(__FILE__)))) . DIRECTORY_SEPARATOR
-             . 'TestHelper.php';
+//require_once dirname(dirname(dirname(dirname(__FILE__)))) . DIRECTORY_SEPARATOR
+//             . 'TestHelper.php';
 
 /**
  * Iml_Auth_Adapter_Shibboleth
@@ -72,22 +72,24 @@ class Iml_Auth_Adapter_ShibbolethTest extends PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
+        require_once 'Zend/Session.php';
+        Zend_Session::$_unitTestEnabled = true;
         // emulate shibdaemon + apache setting up environment variables
-        $_SERVER['HTTP_SHIB_SWISSEP_UNIQUEID']   = 'demouser@unibe.ch';
-        $_SERVER['HTTP_SHIB_INETORGPERSON_MAIL'] = 'demouser@test.unibe.ch';
-        $_SERVER['HTTP_SHIB_INETORGPERSON_GIVENNAME'] = 'demo';
-        $_SERVER['HTTP_SHIB_PERSON_SURNAME']     = 'User';
-        $_SERVER['HTTP_SHIB_EP_AFFILIATION']     = 'staff';
+        $_SERVER['SHIB_SWISSEP_UNIQUEID']   = 'demouser@unibe.ch';
+        $_SERVER['SHIB_INETORGPERSON_MAIL'] = 'demouser@test.unibe.ch';
+        $_SERVER['SHIB_INETORGPERSON_GIVENNAME'] = 'demo';
+        $_SERVER['SHIB_PERSON_SURNAME']     = 'User';
+        $_SERVER['SHIB_EP_AFFILIATION']     = 'staff';
         
         // the identity field name to use for the tests
-        $this->_identityField = 'HTTP_SHIB_SWISSEP_UNIQUEID';
+        $this->_identityField = 'SHIB_SWISSEP_UNIQUEID';
         
         // a key map to use for the tests
         $this->_keyMap = array(
-            'HTTP_SHIB_SWISSEP_UNIQUEID'        => 'id',
-            'HTTP_SHIB_INETORGPERSON_MAIL'      => 'email',
-            'HTTP_SHIB_INETORGPERSON_GIVENNAME' => 'firstname',
-            'HTTP_SHIB_PERSON_SURNAME'          => 'name',
+            'SHIB_SWISSEP_UNIQUEID'        => 'id',
+            'SHIB_INETORGPERSON_MAIL'      => 'email',
+            'SHIB_INETORGPERSON_GIVENNAME' => 'firstname',
+            'SHIB_PERSON_SURNAME'          => 'name',
         );
         
     }

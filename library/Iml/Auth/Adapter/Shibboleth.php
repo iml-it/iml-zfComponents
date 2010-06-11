@@ -185,7 +185,7 @@ class Iml_Auth_Adapter_Shibboleth implements Zend_Auth_Adapter_Interface
     protected function _setupIdentity()
     {
         foreach ($_SERVER as $key => $value) {
-            if (preg_match('/^SHIB_/, $key)) {
+            if (preg_match('/^SHIB_/', $key)) {
                 if ($this->hasKeyMap()) {
                     if (array_key_exists($key, $this->_keyMap)) {
                         $key = $this->_keyMap[$key];

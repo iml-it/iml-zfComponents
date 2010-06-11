@@ -113,4 +113,17 @@ class Iml_Log_Writer_Mail extends Zend_Log_Writer_Abstract
         $this->_mail->send();
     }
 
+
+
+    /**
+     * Construct a Zend_Log driver (here its only because the compatibility to ZF > 1.5)
+     *
+     * @param  array|Zend_Config $config
+     * @return Zend_Log_FactoryInterface
+     */
+    static public function factory($config) {
+        $mail = new Zend_Mail();
+        return new Iml_Log_Writer_Mail($mail);
+    }
+
 }

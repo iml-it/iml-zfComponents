@@ -164,7 +164,7 @@ class Iml_Tree_Visitor_Plaintext implements Iml_Tree_Visitor_Interface
      */
     public function __toString()
     {
-        echo var_dump($this->edges); exit;
+        //echo var_dump($this->edges); exit;
         $tree = '(root)';
         $tree.= $this->doChildren(null);
         return $tree;

@@ -32,6 +32,11 @@ require_once 'Iml/Tree/Datastore/Interface.php';
 require_once 'Iml/Tree/Datastore/Exception.php';
 
 /**
+ * Zend_Db_Table_Abstract
+ */
+require 'Zend/Db/Table/Abstract.php';
+
+/**
  * Iml_Tree_Datastore_Db_Table is an abstract class of a tree node
  * data store that inherits from Zend_Db_Table_Abstract.
  * 
