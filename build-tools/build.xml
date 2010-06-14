@@ -6,15 +6,18 @@
  <target name="prepare">
   <mkdir dir="${basedir}/data/build/logs"/>
   <mkdir dir="${basedir}/data/build/manual"/>
+  <mkdir dir="${basedir}/data/build/codeCoverage"/>
  </target>
  
- <target name="phpunit">
+ <target name="phpunit" depends="clean,prepare">
   <exec dir="${basedir}/tests"
    executable="phpunit"
    failonerror="true">
-   <arg line="AllTests.php --log-junit '${basedir}/data/build/logs/junit.xml'
+   <arg line=" 
+        --log-junit '${basedir}/data/build/logs/junit.xml'
         --coverage-clover '${basedir}/data/build/logs/clover.xml'
-        --coverage-html '${basedir}/data/build/codeCoverage'"/>
+        --coverage-html '${basedir}/data/build/codeCoverage/'
+        "/>
   </exec>
  </target>
  
