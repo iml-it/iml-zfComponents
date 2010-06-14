@@ -1,0 +1,9 @@
+<phpunit colors="true">
+        <testsuite name="application" >
+		<file>AllTests.php</file>
+        </testsuite>
+
+</phpunit>
+
+
+
