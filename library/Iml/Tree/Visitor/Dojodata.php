@@ -21,6 +21,8 @@
  * @version    $Id$
  */
 
+require_once 'Iml/Tree/Visitor/Interface.php';
+
 /**
  * An implementation of the Iml_Tree_Visitor_Interface that generates an
  * XHTML text representation of a tree structure.

@@ -1,126 +1,68 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project name="phing_project" default="usage" basedir="." description="Buildfile for development projects. Configuration done in build.properties.">
-    <property file="build.properties" />
-    <property name="project.revision" value="0" />
-    <property name="project.updated" value="false" />
-    <property name="dir.base" value="${project.basedir}/.." />
-    <property name="dir.build-tools" value="${dir.base}/build-tools" />
-    <property name="dir.build-stylesheets" value="${dir.build-tools}/xsl" />
-    <property name="dir.build" value="${dir.base}/builds" />
-    <property name="dir.logs" value="${dir.build}/logs" />
-    <property name="dir.reports" value="${dir.output}/reports" />
-    <property name="dir.apidocs" value="${dir.output}/apidocs" />
-    <property name="dir.temp" value="${dir.build-tools}/temp" />
-    <property name="project.xmlreport" value="${dir.output}/project.xml" />
-    <property name="project.xmlreport.temp" value="${dir.temp}/project.xml" />
-    <taskdef classname="PhpCodeSnifferExternalTask" name="phpcodesniffer" classpath="${dir.build-tools}/phing/tasks" />
-    <taskdef classname="PhpCodeSnifferReportTask" name="phpcodesnifferreport" classpath="${dir.build-tools}/phing/tasks" />
-    <taskdef classname="SvnLastRevisionDetailsTask" name="svnlastrevisiondetails" classpath="${dir.build-tools}/phing/tasks" />
-    <taskdef classname="SvnRevisionLogTask" name="svnrevisionlog" classpath="${dir.build-tools}/phing/tasks" />
-    <taskdef classname="SvnUpdateModifiedTask" name="svnupdatemod" classpath="${dir.build-tools}/phing/tasks" />
-    <path id="project.class.path">
-        <pathelement dir="${dir.base}/library/"/>
-    </path>
-
-    <target name="build" depends="clean.all, prepare.continuous, svnupdate, test, codesniff" />
-
-    <target name="clean.all" description="Remove all generated files" depends="clean.apidocs, clean.reports">
-        <echo msg="Cleaning output directory... " />
-    </target>
-
-    <target name="clean.reports" description="Remove generated reports and result logs">
-        <echo msg="Cleaning up reports..." />
-        <delete dir="${dir.reports}" failonerror="false" verbose="true" />
-        <delete dir="${dir.logs}" failonerror="false" verbose="true" />
-    </target>
-
-    <target name="clean.apidocs" description="Remove apidoc files.">
-        <echo msg="Cleaning up apidocs..." />
-        <delete dir="${dir.apidocs}" failonerror="false" verbose="true" />
-    </target>
-
-    <target name="prepare">
-        <mkdir dir="${dir.build}" />
-    </target>
-
-    <target name="prepare.continuous" depends="prepare">
-        <mkdir dir="${dir.logs}" />
-        <mkdir dir="${dir.reports}" />
-        <mkdir dir="${dir.apidocs}" />
-    </target>
-
-    <target name="svnupdate" description="runs svn update on project">
-        <svnupdate
-            svnpath="/usr/bin/svn"
-            username="phing"
-            password="phingpass"
-            nocache="true"
-            todir="${dir.base}"/>
-    </target>
-
-    <target name="test" depends="prepare.continuous" unless="project.test.disabled" description="Runs the unittests.">
-        <coverage-setup database="${dir.temp}/coverage.db">
-            <classpath refid="project.class.path" />
-            <fileset dir="${dir.base}/library">
-                <include name="Iml/**/*.php"/>
-            </fileset>
-        </coverage-setup>
-        <phpunit2 codecoverage="true">
-            <formatter todir="${dir.logs}" type="xml" outfile="phpunit_testresults.xml" />
-            <batchtest>
-                <fileset dir="${dir.base}/tests">
-                    <include name="**/*Test.php" />
-                    <exclude name="**/AllTests.php" />
-                    <exclude name="TestConfiguraton*" />
-                    <exclude name="TestHelper.php" />
-                </fileset>
-            </batchtest>
-        </phpunit2>
-
-        <echo msg="Generating report for unittests..." />
-        <mkdir dir="${dir.reports}/unittests" />
-        <phpunit2report infile="${dir.logs}/phpunit_testresults.xml" styledir="xsl" todir="${dir.reports}/unittests" format="frames" />
-
-        <echo msg="Generating report for codecoverage..." />
-        <mkdir dir="${dir.reports}/codecoverage" />
-        <coverage-report outfile="${dir.logs}/coverage.xml">
-            <report todir="${dir.reports}/codecoverage" styledir="xsl"/>
-        </coverage-report>
-    </target>
-
-    <target name="codesniff" depends="prepare.continuous" unless="project.codesniff.disabled" description="Does the code sniffing on project.">
-        <phpcodesniffer report="checkstyle" standard="Zend" todir="${dir.logs}" outfile="phpcs_testresults.xml" showwarnings="false">
-            <fileset dir="${dir.base}">
-                <include name="library/Iml/**/*.php" />
-                <include name="tests/**/*Test.php" />
-            </fileset>
-        </phpcodesniffer>
-
-        <mkdir dir="${dir.reports}/codingstandards" />
-        <echo msg="Generating report for codingstandards..." />
-        <xslt style="xsl/phpcs-noframes.xsl" file="${dir.logs}/phpcs_testresults.xml" tofile="${dir.reports}/codingstandards/details.html" />
-    </target>
-
-    <target name="apidocs" depends="prepare.continuous" unless="project.apidocs.disabled">
-        <phpdoc title="${project.title}"
-            destdir="${dir.apidocs}"
-            sourcecode="yes"
-            quiet="true"
-            output="HTML:frames:earthli">
-            <fileset dir="${dir.base}">
-                <include name="library/**/*.php" />
-                <exclude name="library/Zend/**/*.php" />
-                <include name="tests/**/*Test.php" />
-            </fileset>
-        </phpdoc>
-    </target>
-
-    <target name="usage" description="Prints out a list of possible target.">
-        <echo message="Possible targets to call:" />
-        <echo message="  * build" />
-        <echo message="  * test" />
-        <echo message="  * codesniff" />
-        <echo message="  * apidocs" />
-    </target>
-
+<project name="phing_project" default="build" basedir="../">
+ <target name="clean">
+  <delete dir="${basedir}/data/build"/>
+ </target>
+ 
+ <target name="prepare">
+  <mkdir dir="${basedir}/data/build/logs"/>
+  <mkdir dir="${basedir}/data/build/manual"/>
+ </target>
+ 
+ <target name="phpunit">
+  <exec dir="${basedir}/tests"
+   executable="phpunit"
+   failonerror="true">
+   <arg line="AllTests.php --log-junit '${basedir}/data/build/logs/junit.xml'
+        --coverage-clover '${basedir}/data/build/logs/clover.xml'"/>
+  </exec>
+ </target>
+ 
+ <target name="phpdoc">
+  <exec dir="${basedir}"
+   executable="phpdoc"
+   failonerror="false">
+    <arg line="--quiet 
+     --ignore library/Zend/ 
+     -t '${basedir}/data/build/manual'
+     -d  ."/>
+  </exec>
+ </target>
+ 
+ <target name="phpcs">
+  <exec dir="${basedir}"
+   executable="phpcs"
+   output="${basedir}/data/build/logs/checkstyle.xml"
+   failonerror="false">
+    <arg line="--standard=Zend --report=checkstyle --ignore=library/Zend ."/>
+   </exec>
+  </target>
+ 
+ <target name="phpmd">
+  <exec dir="${basedir}"
+   executable="phpmd"
+   failonerror="false">
+    <arg line=". xml codesize
+     --reportfile '${basedir}/data/build/logs/pmd.xml'
+     --ignore 'library/Zend'"/>
+  </exec>
+ </target>
+ 
+ <target name="phpcpd">
+  <exec dir="${basedir}"
+   executable="phpcpd"
+   failonerror="false">
+    <arg line="--log-pmd '${basedir}/data/build/logs/pmd-cpd.xml' --exclude library/Zend ."/>
+  </exec>
+ </target>
+ 
+ <target name="pdepend">
+  <exec dir="${basedir}"
+   executable="pdepend"
+   failonerror="false">
+    <arg line="--jdepend-xml='${basedir}/data/build/logs/jdepend.xml' --ignore=library/Zend ."/>
+  </exec>
+ </target>
+ 
+ <target name="build"
+  depends="clean,prepare,phpcs,phpmd,phpcpd,pdepend,phpdoc,phpunit"/>
 </project>
