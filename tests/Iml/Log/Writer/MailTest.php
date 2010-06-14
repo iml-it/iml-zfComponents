@@ -210,7 +210,7 @@ class Iml_Log_Writer_MailTest extends PHPUnit_Framework_TestCase
      */
     public function testFactoryMethod() 
     {
-        $object = Iml_Log_Writer_Mail::factory();
+        $object = Iml_Log_Writer_Mail::factory(array());
         $this->assertTrue($object instanceof Iml_Log_Writer_Mail);
     }
 }
