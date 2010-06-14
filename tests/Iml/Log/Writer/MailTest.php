@@ -190,6 +190,15 @@ class Iml_Log_Writer_MailTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test factory method
+     */
+    public function testFactoryMethod() 
+    {
+        $object = Iml_Log_Writer_Mail::factory(array());
+        $this->assertTrue($object instanceof Iml_Log_Writer_Mail);
+    }
+
+    /**
      * Test case to assert that a new formatter can be set
      */
     public function testSettingNewFormatter()
