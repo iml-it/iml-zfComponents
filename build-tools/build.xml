@@ -13,7 +13,8 @@
    executable="phpunit"
    failonerror="true">
    <arg line="AllTests.php --log-junit '${basedir}/data/build/logs/junit.xml'
-        --coverage-clover '${basedir}/data/build/logs/clover.xml'"/>
+        --coverage-clover '${basedir}/data/build/logs/clover.xml'
+        --coverage-html '${basedir}/data/build/codeCoverage'"/>
   </exec>
  </target>
  
