@@ -2,7 +2,14 @@
         <testsuite name="application" >
 		<file>AllTests.php</file>
         </testsuite>
-
+        <filter>
+                <whitelist>
+                        <exclude>
+                                <directory suffix=".php">../library/Zend</directory>
+                                <directory suffix=".php">.</directory>
+                        </exclude>
+                </whitelist>
+        </filter>
 </phpunit>
 
 
