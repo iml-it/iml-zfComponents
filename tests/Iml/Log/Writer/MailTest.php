@@ -213,13 +213,4 @@ class Iml_Log_Writer_MailTest extends PHPUnit_Framework_TestCase
 
         $this->assertContains($expected, $this->_mock->body);
     }
-
-    /**
-     * test factory method
-     */
-    public function testFactoryMethod() 
-    {
-        $object = Iml_Log_Writer_Mail::factory(array());
-        $this->assertTrue($object instanceof Iml_Log_Writer_Mail);
-    }
 }
