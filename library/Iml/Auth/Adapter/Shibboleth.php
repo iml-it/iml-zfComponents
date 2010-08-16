@@ -49,6 +49,13 @@ class Iml_Auth_Adapter_Shibboleth implements Zend_Auth_Adapter_Interface
      * @var string
      */
     protected $_identityField = null;
+
+    /**
+     * $_prefix - Common shibboleth attribute prefix
+     *
+     * @var string
+     */
+    protected $_attributePrefix = 'Shib-';
     
     /**
      * $_keyMap - Keymap hash for translating keys
@@ -156,6 +163,26 @@ class Iml_Auth_Adapter_Shibboleth implements Zend_Auth_Adapter_Interface
     }
 
     /**
+     * Setup common prefix of Shibboleth attributes
+     *
+     * Defaults to Shib if not overridden
+     */
+    public function setShibbolethAttributePrefix($prefix)
+    {
+        $this->_attributePrefix = $prefix;
+    }
+
+    /**
+     * Get current set shibboleth attribute prefix
+     *
+     * @return string
+     */
+    public function getShibbolethAttributePrefix()
+    {
+        return $this->_attributePrefix;
+    }
+
+    /**
      * clearKeyMap() - Clear out a previously set keymap.
      *
      * @return void
@@ -184,8 +211,9 @@ class Iml_Auth_Adapter_Shibboleth implements Zend_Auth_Adapter_Interface
      */
     protected function _setupIdentity()
     {
+        $pattern = '#^' . $this->getShibbolethAttributePrefix() . '#';
         foreach ($_SERVER as $key => $value) {
-            if (preg_match('/^Shib-/', $key)) {
+            if (preg_match($pattern, $key)) {
                 if ($this->hasKeyMap()) {
                     if (array_key_exists($key, $this->_keyMap)) {
                         $key = $this->_keyMap[$key];

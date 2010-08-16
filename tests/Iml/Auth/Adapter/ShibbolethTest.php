@@ -63,8 +63,17 @@ class Iml_Auth_Adapter_ShibbolethTest extends PHPUnit_Framework_TestCase
 
     /**
      * A key map mapping shib variables to app variables
+     *
+     * @var array
      */
     protected $_keyMap = array();
+
+    /**
+     * Default Shibboleth attribute prefix
+     *
+     * @var string
+     */
+    protected $_defaultAttributePrefix = 'Shib-';
 
     /**
      * Setup fixtures for the tests. This includes fake variables
@@ -75,21 +84,21 @@ class Iml_Auth_Adapter_ShibbolethTest extends PHPUnit_Framework_TestCase
         require_once 'Zend/Session.php';
         Zend_Session::$_unitTestEnabled = true;
         // emulate shibdaemon + apache setting up environment variables
-        $_SERVER['SHIB_SWISSEP_UNIQUEID']   = 'demouser@unibe.ch';
-        $_SERVER['SHIB_INETORGPERSON_MAIL'] = 'demouser@test.unibe.ch';
-        $_SERVER['SHIB_INETORGPERSON_GIVENNAME'] = 'demo';
-        $_SERVER['SHIB_PERSON_SURNAME']     = 'User';
-        $_SERVER['SHIB_EP_AFFILIATION']     = 'staff';
+        $_SERVER['Shib-SwissEP-UniqueID']   = 'demouser@unibe.ch';
+        $_SERVER['Shib-InetOrgPerson-mail'] = 'demouser@test.unibe.ch';
+        $_SERVER['Shib-InetOrgPerson-givenName'] = 'demo';
+        $_SERVER['Shib-Person-surname']     = 'User';
+        $_SERVER['Shib-EP-Affiliation']     = 'staff';
         
         // the identity field name to use for the tests
-        $this->_identityField = 'SHIB_SWISSEP_UNIQUEID';
+        $this->_identityField = 'Shib-SwissEP-UniqueID';
         
         // a key map to use for the tests
         $this->_keyMap = array(
-            'SHIB_SWISSEP_UNIQUEID'        => 'id',
-            'SHIB_INETORGPERSON_MAIL'      => 'email',
-            'SHIB_INETORGPERSON_GIVENNAME' => 'firstname',
-            'SHIB_PERSON_SURNAME'          => 'name',
+            'Shib-SwissEP-UniqueID'        => 'id',
+            'Shib-InetOrgPerson-mail'      => 'email',
+            'Shib-InetOrgPerson-givenName' => 'firstname',
+            'Shib-Person-surname'          => 'name',
         );
         
     }
@@ -100,10 +109,10 @@ class Iml_Auth_Adapter_ShibbolethTest extends PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
-        unset($_SERVER['HTTP_SHIB_SWISSEP_UNIQUEID']);
-        unset($_SERVER['HTTP_SHIB_INETORGPERSON_MAIL']);
-        unset($_SERVER['HTTP_SHIB_INETORGPERSON_GIVENNAME']);
-        unset($_SERVER['HTTP_SHIB_PERSON_SURNAME']);
+        unset($_SERVER['Shib-SwissEP-UniqueID']);
+        unset($_SERVER['Shib-InetOrgPerson-mail']);
+        unset($_SERVER['Shib-InetOrgPerson-givenName']);
+        unset($_SERVER['Shib-Person-surname']);
     }
     
     /**
@@ -182,7 +191,7 @@ class Iml_Auth_Adapter_ShibbolethTest extends PHPUnit_Framework_TestCase
             $this->assertRegExp('/array of key\/value/i', $e->getMessage());
         }
     }
-    
+
     /**
      * Test if a direct authentication works.
      */
@@ -250,4 +259,41 @@ class Iml_Auth_Adapter_ShibbolethTest extends PHPUnit_Framework_TestCase
         $identity = $result->getIdentity();
         $this->assertEquals(count($this->_keyMap), count($identity));
     }
+
+    /**
+     * test if default attribute prefix is set within auth adapter
+     */
+    public function testDefaultAttributePrefix()
+    {
+        $auth = new Iml_Auth_Adapter_Shibboleth();
+        $this->assertEquals($this->_defaultAttributePrefix, $auth->getShibbolethAttributePrefix());
+    }
+
+    /**
+     * test if default attribute prefix can be overwritten
+     */
+    public function testOverrideDefaultAttributePrefix()
+    {
+        $prefix = 'OTHER-';
+        $identityField = 'OTHER-SwissEP-UniqueID';
+        $keyMap = array(
+            'OTHER-SwissEP-UniqueID'        => 'id',
+            'OTHER-InetOrgPerson-mail'      => 'email',
+            'OTHER-InetOrgPerson-givenName' => 'firstname',
+            'OTHER-Person-surname'          => 'name',
+        );
+        $this->tearDown();
+        foreach ($keyMap as $key => $value) {
+            $_SERVER[$key] = $value;
+        }
+        $auth = new Iml_Auth_Adapter_Shibboleth();
+        $auth->setShibbolethAttributePrefix('OTHER-');
+        $auth->setIdentityField($identityField);
+        $auth->setKeyMap($keyMap);
+        $this->assertEquals($prefix, $auth->getShibbolethAttributePrefix());
+        $result = $auth->authenticate();
+        $this->assertTrue($result instanceof Zend_Auth_Result);
+        $this->assertTrue($result->isValid());
+    }
+
 }
