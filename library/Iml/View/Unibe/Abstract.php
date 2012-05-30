@@ -19,6 +19,7 @@ abstract class Iml_View_Unibe_Abstract extends Zend_View
         if($name == null) $name = 'base_template_apps.html';
 
         /* setting default values if property is not set by controller */
+        $this->searchButtonText = $this->getSearchButtonText($this->language);
         if(!isset($this->pagetitle)) $this->pagetitle = 'no pagetitle set';
         if(!isset($this->meta)) $this->meta = '';
         if(!isset($this->cssfiles)) $this->cssfiles = '';
@@ -50,6 +51,23 @@ abstract class Iml_View_Unibe_Abstract extends Zend_View
             throw new RuntimeException('Unsupported language ' . $lang);
         }
         $this->language = $lang;
+    }
+
+    private function getSearchButtonText($lang) {
+        switch ($lang) {
+            case 'de':
+                return 'Suchen';
+                break;
+            case 'fr':
+                return 'Chercher';
+                break;
+            case 'en':
+                return 'Search';
+                break;
+            default:
+                return 'Suchen';
+                break;
+        }
     }
 
     private function getGlobalNavigationString($lang) {

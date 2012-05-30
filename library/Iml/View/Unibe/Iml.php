@@ -11,7 +11,6 @@ class Iml_View_Unibe_Iml extends Iml_View_Unibe_Abstract
         <link href="css/explorer/iehacks_med.css" rel="stylesheet" type="text/css" />
         <![endif]-->';
         $this->identityText = 'Institut für Medizinische Lehre';
-        $this->metanavigation = '<a href="http://www.iml.unibe.ch/metanavigation/kontakt/" onfocus="blurLink(this);">Kontakt</a>&#160;&#124;&#160;<a href="http://www.iml.unibe.ch/metanavigation/lageplan/" onfocus="blurLink(this);">Lageplan</a>&#160;&#124;&#160;<a href="http://www.iml.unibe.ch/metanavigation/sitemap/" onfocus="blurLink(this);">Sitemap</a>&#160;&#124;&#160;';
         $this->adressfuss = 'Universit&auml;t Bern | Institut f&uuml;r Medizinische Lehre | Inselspital 37a | CH-3010 Bern | +41 (0)31 632 35 73';
         $this->footer = '&copy; Universit&auml;t Bern&#160;' . date('d.m.Y') . '&#160;&#124;&#160;<a href="http://www.iml.unibe.ch/metanavigation/impressum/" onfocus="blurLink(this);">Impressum</a>';
         parent::__construct($config);
@@ -19,6 +18,11 @@ class Iml_View_Unibe_Iml extends Iml_View_Unibe_Abstract
 
     public function render($name) {
         $this->breadcrumb = $this->getBreadCrumbNavigationString($this->language) . $this->breadcrumb;
+        if (isset($this->metanavigation)) {
+            $this->metanavigation = $this->getMetanavigation($this->language) . $this->metanavigation;
+        } else {
+            $this->metanavigation = $this->getMetanavigation($this->language);
+        }
         return parent::render($name);
     }
 
@@ -32,6 +36,23 @@ class Iml_View_Unibe_Iml extends Iml_View_Unibe_Abstract
                 break;
             case 'en':
                 return '<a href="http://www.unibe.ch/">home university</a> &gt; <a href="http://www.medizin.unibe.ch/">faculty of medicine</a> > <a href="http://www.iml.unibe.ch/">institute of medical education</a>&#160;>&#160;';
+                break;
+            default:
+                return '';
+                break;
+        }
+    }
+
+    private function getMetanavigation($lang) {
+        switch ($lang) {
+            case 'de':
+                return '<a href="http://www.iml.unibe.ch/metanavigation/kontakt/" onfocus="blurLink(this);">Kontakt</a>&#160;&#124;&#160;<a href="http://www.iml.unibe.ch/metanavigation/lageplan/" onfocus="blurLink(this);">Lageplan</a>&#160;&#124;&#160;<a href="http://www.iml.unibe.ch/metanavigation/sitemap/" onfocus="blurLink(this);">Sitemap</a>&#160;&#124;&#160;';
+                break;
+            case 'fr':
+                return '<a href="http://www.iml.unibe.ch/fr/metanavigation/contact/" onfocus="blurLink(this);">Contact</a>&#160;&#124;&#160;<a href="http://www.iml.unibe.ch/fr/metanavigation/lageplan/" onfocus="blurLink(this);">Plan de situation</a>&#160;&#124;&#160;<a href="http://www.iml.unibe.ch/fr/metanavigation/sitemap/" onfocus="blurLink(this);">Sitemap</a>&#160;&#124;&#160;';
+                break;
+            case 'en':
+                return '<a href="http://www.iml.unibe.ch/en/metanavigation/contact/" onfocus="blurLink(this);">Contact</a>&#160;&#124;&#160;<a href="http://www.iml.unibe.ch/en/metanavigation/location-map/" onfocus="blurLink(this);">Where to find us</a>&#160;&#124;&#160;<a href="http://www.iml.unibe.ch/en/metanavigation/sitemap/" onfocus="blurLink(this);">Sitemap</a>&#160;&#124;&#160;';
                 break;
             default:
                 return '';
