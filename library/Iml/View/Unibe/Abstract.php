@@ -73,31 +73,37 @@ abstract class Iml_View_Unibe_Abstract extends Zend_View
     private function getGlobalNavigationString($lang) {
         switch ($lang) {
             case 'de':
-                return '<ul id="udm">
-                    <li id="Studium"><a href="http://www.unibe.ch/studium/">Studium</a></li>
-                    <li id="Campus"><a href="http://www.unibe.ch/campus/">| Campus</a></li>
-                    <li id="Bibliotheken"><a href="http://www.unibe.ch/bibliotheken/">| Bibliotheken</a></li>
-                    <li id="Forschung"><a href="http://www.unibe.ch/forschung/">| Forschung</a></li>
-                    <li id="Organisation"><a href="http://www.unibe.ch/organisation/">| Organisation</a></li>
-                    <li id="Arbeiten"><a href="http://www.unibe.ch/arbeiten/">| Arbeiten an der Uni</a></li>
-                    <li id="Oeffentlichkeit"><a href="http://www.unibe.ch/oeffentlichkeit/">| &Ouml;ffentlichkeit</a></li>
-                 </ul>';
+                return '<!-- rubriken globale navigation -->
+        <ul id="udm" class="udm">
+            <li id="Studium"><a href="http://www.unibe.ch/studium/">Studium</a></li>
+            <li id="Campus"><a href="http://www.unibe.ch/campus/">| Campus</a></li>
+            <li id="Bibliotheken"><a href="http://www.ub.unibe.ch/">| Bibliotheken</a></li>
+            <li id="Forschung"><a href="http://www.unibe.ch/forschung/">| Forschung</a></li>
+            <li id="Organisation"><a href="http://www.unibe.ch/organisation/">| Organisation</a></li>
+            <li id="Arbeiten"><a href="http://www.unibe.ch/arbeiten/">| Arbeiten an der Uni</a></li>
+            <li id="Oeffentlichkeit"><a href="http://www.unibe.ch/oeffentlichkeit/">| &Ouml;ffentlichkeit</a></li>
+        </ul>
+';
                 break;
             case 'fr':
-                return '<ul id="udm">
-                    <li id="Studium"><a href="etudes/index.html">Etudier</a></li>
-                    <li id="Bibliotheken"><a href="http://www.unibe.ch/fra/biblio.html">| Biblioth&egrave;ques </a></li>
-                    <li id="Forschung"><a href="http://www.unibe.ch/fra/recherche.html">| Recherche </a></li>
-                    <li id="Oeffentlichkeit"><a href="http://www.unibe.ch/fra/portrait/index.html">| Portrait </a></li>
-                </ul>';
+                return '<!-- rubriken globale navigation -->
+        <ul id="udm" class="udm">
+            <li id="Studium"><a href="etudes/index.html">Etudier</a></li>
+            <li id="Bibliotheken"><a href="http://www.unibe.ch/fra/biblio.html">| Biblioth&egrave;ques </a></li>
+            <li id="Forschung"><a href="http://www.unibe.ch/fra/recherche.html">| Recherche </a></li>
+            <li id="Oeffentlichkeit"><a href="http://www.unibe.ch/fra/portrait/index.html">| Portrait </a></li>
+        </ul>
+';
                 break;
             case 'en':
-                return '<ul id="udm">
-                    <li id="Studium"><a href="http://www.unibe.ch/eng/studies/index.html">Studying</a></li>
-                    <li id="Bibliotheken"><a href="http://www.unibe.ch/eng/libraries.html">| Libraries</a></li>
-                    <li id="Forschung"><a href="http://www.unibe.ch/eng/research.html">| Research</a></li>
-                    <li id="Oeffentlichkeit"><a href="http://www.unibe.ch/eng/about/index.html">| About us</a></li>
-                </ul>';
+                return '<!-- rubriken globale navigation -->
+        <ul id="udm" class="udm">
+            <li id="Studium"><a href="http://www.unibe.ch/eng/studies/index.html">Studying</a></li>
+            <li id="Bibliotheken"><a href="http://www.unibe.ch/eng/libraries.html">| Libraries</a></li>
+            <li id="Forschung"><a href="http://www.unibe.ch/eng/research.html">| Research</a></li>
+            <li id="Oeffentlichkeit"><a href="http://www.unibe.ch/eng/about/index.html">| About us</a></li>
+        </ul>
+';
                 break;
             default:
                 return '';
